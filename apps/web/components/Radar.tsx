@@ -13,7 +13,7 @@ export function Radar({
 }: {
   dados: DadosDoRadar;
   trilha: string;
-  uf: string;
+  uf?: string;
 }) {
   const [canal, setCanal] = useState<"whatsapp" | "email">("whatsapp");
   const [contato, setContato] = useState("");
@@ -32,7 +32,7 @@ export function Radar({
       const r = await fetch("/api/radar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ canal, contato, trilha, uf, aceite: true }),
+        body: JSON.stringify({ canal, contato, trilha, ...(uf ? { uf } : {}), aceite: true }),
       });
       if (!r.ok) {
         const problema = (await r.json().catch(() => null)) as { detail?: string } | null;

@@ -97,10 +97,30 @@ a {
 
 .topo {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.6rem;
+  justify-content: space-between;
+  gap: 0.35rem 1.25rem;
   padding-block: 1rem;
   border-bottom: 3px solid var(--tinta);
+}
+
+.topo .marca {
+  color: var(--tinta);
+  text-decoration: none;
+}
+
+.topo nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.1rem;
+  font-size: 1rem;
+}
+
+.topo nav a {
+  padding-block: 0.4rem;
+  color: var(--tinta);
+  text-underline-offset: 0.25em;
 }
 
 .marca {
@@ -441,6 +461,69 @@ button {
 .fonte {
   color: var(--apoio);
   font-size: 0.9375rem;
+}
+
+/* Guias passo a passo */
+
+.botao {
+  display: inline-block;
+  padding: 0.8rem 1.25rem;
+  border-radius: 4px;
+  background: var(--tinta);
+  color: var(--papel);
+  font-family: var(--placa);
+  font-size: 1.125rem;
+  font-weight: 750;
+  font-stretch: 88%;
+  text-decoration: none;
+}
+
+.passos {
+  margin: 1.75rem 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+.passo {
+  position: relative;
+  counter-increment: passo;
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem 0.5rem 4rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.passo::before {
+  content: counter(passo);
+  position: absolute;
+  left: 1.1rem;
+  top: 0.85rem;
+  font-family: var(--placa);
+  font-size: 2.25rem;
+  font-weight: 850;
+  font-stretch: 75%;
+  line-height: 1;
+}
+
+.passo h2 {
+  margin-block: 0 0.5rem;
+}
+
+/* Tracejado quer dizer a mesma coisa do resto do site: ainda sem definição. */
+.passo.aguardando {
+  border-style: dashed;
+}
+
+.situacao {
+  margin-bottom: 0.2rem;
+  color: var(--apoio);
+  font-size: 0.9375rem;
+}
+
+.alerta li::before {
+  background: var(--carimbo);
+  transform: scale(0.7);
 }
 
 /* Radar do CNPJ técnico */

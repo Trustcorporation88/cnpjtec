@@ -59,7 +59,7 @@ export const PedidoDeAviso = z
     canal: z.enum(["whatsapp", "email"]),
     contato: z.string().min(1).max(160),
     trilha: z.enum(["A_NANO", "B_PF_CONTRIBUINTE", "C_MEI_SERVICO", "D_MEI_REVENDA", "E_ME_EPP"]),
-    uf: z.string().regex(/^[A-Z]{2}$/),
+    uf: z.string().regex(/^[A-Z]{2}$/).optional(),
     aceite: z.literal(true),
   })
   .strict();
@@ -86,7 +86,7 @@ export function criarLimite(maximo: number, janelaMs: number, agora: () => numbe
 /** Grava o pedido no banco. Contato repetido conta como gravado, para não revelar se já existia. */
 export async function gravarPedido(
   config: ConfiguracaoDoRadar,
-  pedido: { canal: string; contato: string; trilha: string; uf: string },
+  pedido: { canal: string; contato: string; trilha: string; uf: string | null },
   buscar: typeof fetch = fetch,
 ): Promise<boolean> {
   const resposta = await buscar(`${config.url}/rest/v1/radar_inscricoes`, {

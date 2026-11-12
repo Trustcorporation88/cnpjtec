@@ -3,10 +3,11 @@ import "@fontsource/atkinson-hyperlegible/700.css";
 import "@fontsource-variable/archivo/wdth.css";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Raio-X Fiscal MEiSHOP",
+  title: "MEiSHOP: imposto de quem trabalha por conta própria",
   description:
     "Responda poucas perguntas e descubra o que muda para você em 2027: CNPJ técnico, MEI, nota fiscal e inscrição estadual.",
   robots: { index: false, follow: false },
@@ -26,8 +27,14 @@ export default function Layout({ children }: { children: ReactNode }) {
           Versão de testes. As regras ainda estão sendo conferidas por um contador.
         </p>
         <header className="topo">
-          <span className="marca">MEiSHOP</span>
-          <span className="produto">Raio-X Fiscal</span>
+          <Link className="marca" href="/">
+            MEiSHOP
+          </Link>
+          <nav aria-label="Principal">
+            <Link href="/">Minha situação</Link>
+            <Link href="/das">Guia do MEI</Link>
+            <Link href="/cnpj-tecnico">CNPJ técnico</Link>
+          </nav>
         </header>
         <main>{children}</main>
         <footer className="rodape">

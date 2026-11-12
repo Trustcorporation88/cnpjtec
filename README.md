@@ -14,9 +14,9 @@ Fase 1 em andamento. O Raio-X Fiscal está publicado como prévia de testes no R
 | `packages/motor-regras` | Motor puro que classifica a pessoa em trilhas e aponta alertas e pendências | Trilhas A a E, com os casos de teste da Fase 0 |
 | `packages/agente` | Prompt de sistema e contrato das ferramentas do agente (API da Anthropic) | Contrato de 19 ferramentas definido, sem implementação |
 | `packages/conteudo` | Textos em linguagem simples que transformam o resultado do motor em diagnóstico | Trilhas, alertas e pendências cobertos. Textos aguardam revisão do contador |
-| `apps/web` | Site (Next.js) com o Raio-X Fiscal: questionário de uma pergunta por tela e resultado com a regra de cada afirmação | Funciona localmente, sem cadastro e sem gravar respostas |
+| `apps/web` | Site (Next.js) com o Raio-X Fiscal: questionário de uma pergunta por tela, resultado com a regra de cada afirmação, página da guia do MEI e página do caminho do CNPJ técnico | Publicado como prévia de testes |
 | `supabase/migrations` | Estrutura do banco (Supabase, região de São Paulo) | Tabela `radar_inscricoes`, em que a chave pública só inclui e não lê |
-| `docs/adr` | Decisões de arquitetura | 6 decisões propostas, aguardando aceite |
+| `docs/adr` | Decisões de arquitetura | 7 decisões. A 0007 trata da geração automática do DAS e aguarda credenciais |
 
 ## Como rodar
 

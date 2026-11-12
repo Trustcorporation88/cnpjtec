@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { mostrarValor } from "@/lib/dinheiro";
 import type { RespostaDoRaioX } from "@/lib/respostas";
 import { Radar, type DadosDoRadar } from "./Radar";
@@ -112,6 +113,22 @@ export function Resultado({
           <p>Estes pontos podem mudar o seu resultado. Quando saírem, a gente atualiza.</p>
           <Lista frases={d.semDefinicao} classe="lista" />
         </section>
+      )}
+
+      {d.trilhas.includes("B_PF_CONTRIBUINTE") && (
+        <p>
+          <Link className="botao" href="/cnpj-tecnico">
+            Ver o caminho do CNPJ técnico
+          </Link>
+        </p>
+      )}
+
+      {(d.trilhas.includes("C_MEI_SERVICO") || d.trilhas.includes("D_MEI_REVENDA")) && (
+        <p>
+          <Link className="botao" href="/das">
+            Ver como gerar a guia do MEI
+          </Link>
+        </p>
       )}
 
       {radar && d.trilhas.includes("B_PF_CONTRIBUINTE") && (

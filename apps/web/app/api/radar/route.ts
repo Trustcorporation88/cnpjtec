@@ -57,7 +57,7 @@ export async function POST(request: Request): Promise<Response> {
       canal: pedido.data.canal,
       contato,
       trilha: pedido.data.trilha,
-      uf: pedido.data.uf,
+      uf: pedido.data.uf ?? null,
     });
     if (!gravou) throw new Error("O banco recusou a gravação.");
   } catch (erro) {
