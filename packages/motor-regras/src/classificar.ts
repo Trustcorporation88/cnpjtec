@@ -205,3 +205,21 @@ export function classificar(perfil: Perfil, parametros: ParametrosDoMotor): Resu
 
   return montar();
 }
+
+/**
+ * Transforma a média mensal informada pela pessoa em receita do ano, pelos meses de atividade.
+ * Fica no motor para que nenhuma conta seja feita na interface.
+ */
+export function receitaAnualDeMedia(mediaMensal: string, meses = 12): string {
+  if (!Number.isInteger(meses) || meses < 1 || meses > 12) {
+    throw new PerfilInvalido("Meses de atividade no ano deve ser um inteiro de 1 a 12.");
+  }
+  let media: Decimal;
+  try {
+    media = new Decimal(mediaMensal);
+  } catch {
+    throw new PerfilInvalido("Valor mensal inválido.");
+  }
+  if (!media.isFinite() || media.isNegative()) throw new PerfilInvalido("Valor mensal inválido.");
+  return formatar(media.times(meses));
+}

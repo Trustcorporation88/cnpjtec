@@ -1,2 +1,2 @@
 export * from "./tipos";
-export { classificar, ParametroAusente, PerfilInvalido } from "./classificar";
+export { classificar, ParametroAusente, PerfilInvalido, receitaAnualDeMedia } from "./classificar";

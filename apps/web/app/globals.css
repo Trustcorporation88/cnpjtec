@@ -1,0 +1,450 @@
+/*
+  Direção visual: a placa de preço do comércio popular.
+  Uma única peça forte (a placa amarela com a resposta) e o resto quieto, em preto no branco.
+  Borda tracejada tem um só significado em todo o site: ponto ainda sem definição.
+*/
+:root {
+  --amarelo: #ffd400;
+  --tinta: #000000;
+  --papel: #ffffff;
+  --caneta: #1438a6;
+  --verde: #0a6b36;
+  --carimbo: #b3261e;
+  --apoio: #4d4d4d;
+
+  --texto: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --placa: "Archivo Variable", "Arial Narrow", sans-serif;
+
+  --coluna: 36rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--texto);
+  font-size: 1.125rem;
+  line-height: 1.55;
+}
+
+main,
+.topo,
+.rodape {
+  max-width: var(--coluna);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+main {
+  padding-block: 1.5rem 3rem;
+}
+
+h1,
+h2 {
+  font-family: var(--placa);
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 6.5vw, 2.5rem);
+  font-weight: 750;
+  font-stretch: 88%;
+  line-height: 1.1;
+  outline: none;
+}
+
+h2 {
+  font-size: 1.375rem;
+  font-weight: 750;
+  font-stretch: 88%;
+  line-height: 1.2;
+  margin-block: 2.25rem 0.75rem;
+}
+
+p {
+  margin-block: 0 1rem;
+}
+
+a {
+  color: var(--caneta);
+}
+
+:focus-visible {
+  outline: 3px solid var(--caneta);
+  outline-offset: 3px;
+}
+
+/* Moldura */
+
+.aviso-teste {
+  margin: 0;
+  padding: 0.5rem 1.25rem;
+  background: var(--tinta);
+  color: var(--papel);
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.topo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding-block: 1rem;
+  border-bottom: 3px solid var(--tinta);
+}
+
+.marca {
+  font-family: var(--placa);
+  font-weight: 850;
+  font-stretch: 80%;
+  font-size: 1.5rem;
+}
+
+.produto {
+  font-size: 1rem;
+}
+
+.rodape {
+  padding-block: 1.25rem 2.5rem;
+  border-top: 1px solid var(--tinta);
+  color: var(--apoio);
+  font-size: 0.9375rem;
+}
+
+/* Pergunta */
+
+.abertura {
+  font-size: 1.1875rem;
+}
+
+.progresso {
+  margin-bottom: 0.5rem;
+  color: var(--apoio);
+  font-size: 1rem;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.dica {
+  display: block;
+  color: var(--apoio);
+}
+
+.opcoes {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.opcao {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 4rem;
+  padding: 0.85rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.opcao[data-marcado="true"] {
+  background: var(--amarelo);
+  box-shadow: inset 0 0 0 1px var(--tinta);
+}
+
+.opcao input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--tinta);
+}
+
+.opcao:has(input:focus-visible) {
+  outline: 3px solid var(--caneta);
+  outline-offset: 3px;
+}
+
+.opcao strong {
+  display: block;
+  line-height: 1.3;
+}
+
+.opcao small {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.campo-valor {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  font-size: 1.25rem;
+}
+
+.campo-valor:focus-within {
+  outline: 3px solid var(--caneta);
+  outline-offset: 3px;
+}
+
+.campo-valor input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-family: var(--placa);
+  font-size: 2rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.campo-uf select {
+  width: 100%;
+  min-height: 3.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+}
+
+.erro {
+  margin-block: 1rem 0;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--carimbo);
+  color: var(--carimbo);
+  font-weight: 700;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-top: 1.75rem;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.principal {
+  flex: 1 1 14rem;
+  min-height: 3.75rem;
+  padding: 0.75rem 1.5rem;
+  border: 0;
+  border-radius: 4px;
+  background: var(--tinta);
+  color: var(--papel);
+  font-family: var(--placa);
+  font-size: 1.25rem;
+  font-weight: 750;
+  font-stretch: 88%;
+}
+
+.principal:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.secundario {
+  min-height: 3rem;
+  padding: 0.5rem 0;
+  border: 0;
+  background: none;
+  color: var(--caneta);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Resultado */
+
+.placa {
+  margin: 0.75rem 0.25rem 1.75rem;
+  padding: 1.1rem 1.25rem 1.4rem;
+  background: var(--amarelo);
+  border: 3px solid var(--tinta);
+  transform: rotate(-1.2deg);
+}
+
+.placa p {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.placa h1 {
+  font-size: clamp(2.25rem, 10vw, 3.5rem);
+  font-weight: 850;
+  font-stretch: 75%;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.resumo {
+  font-size: 1.1875rem;
+}
+
+.conta {
+  margin: 0;
+  border-bottom: 1px solid var(--tinta);
+}
+
+.conta div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.15rem 1rem;
+  padding-block: 0.6rem;
+  border-top: 1px solid var(--tinta);
+}
+
+.conta dt {
+  flex: 1 1 11rem;
+}
+
+.conta dd {
+  margin: 0 0 0 auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.observacao {
+  margin-block: 0.75rem 0;
+  color: var(--apoio);
+  font-size: 1rem;
+}
+
+.lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista li {
+  position: relative;
+  padding-left: 2.1rem;
+  margin-bottom: 0.9rem;
+}
+
+.lista li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+/* Tarefa: uma caixinha para marcar. */
+.fazer li::before {
+  border: 2px solid var(--tinta);
+  border-radius: 2px;
+}
+
+/* Dispensa: ponto verde cheio. */
+.dispensa li::before {
+  border-radius: 50%;
+  background: var(--verde);
+  transform: scale(0.7);
+}
+
+.indefinido {
+  margin-top: 2.25rem;
+  padding: 0.25rem 1.1rem 0.5rem;
+  border: 2px dashed var(--tinta);
+  border-radius: 4px;
+}
+
+.indefinido h2 {
+  margin-top: 1rem;
+}
+
+.indefinido .lista li {
+  padding-left: 0;
+}
+
+.indefinido .lista li::before {
+  content: none;
+}
+
+.ref {
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+.fontes {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--tinta);
+}
+
+.fontes summary {
+  color: var(--caneta);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.fontes ul {
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fontes li {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.fontes li p {
+  margin-bottom: 0.2rem;
+}
+
+.fontes li:target {
+  background: var(--amarelo);
+  outline: 6px solid var(--amarelo);
+}
+
+.fonte {
+  color: var(--apoio);
+  font-size: 0.9375rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}

@@ -6,13 +6,15 @@ Contador de bolso com IA do MEiSHOP para quem trabalha por conta própria: nanoe
 
 ## Estado atual
 
-Fase 0 e início da fundação. Ainda não há site nem serviço no ar.
+Fase 1 em andamento. O Raio-X Fiscal roda localmente. Ainda não há serviço no ar, banco de dados nem agente de IA ligado.
 
 | Pacote | O que é | Estado |
 |---|---|---|
 | `packages/regras` | Regras e parâmetros legais como dado versionado, com fonte, status e grau de conferência | 31 regras: 9 conferidas na fonte oficial, 13 em fonte secundária, 5 não conferidas e 4 sem norma publicada |
 | `packages/motor-regras` | Motor puro que classifica a pessoa em trilhas e aponta alertas e pendências | Trilhas A a E, com os casos de teste da Fase 0 |
 | `packages/agente` | Prompt de sistema e contrato das ferramentas do agente (API da Anthropic) | Contrato de 19 ferramentas definido, sem implementação |
+| `packages/conteudo` | Textos em linguagem simples que transformam o resultado do motor em diagnóstico | Trilhas, alertas e pendências cobertos. Textos aguardam revisão do contador |
+| `apps/web` | Site (Next.js) com o Raio-X Fiscal: questionário de uma pergunta por tela e resultado com a regra de cada afirmação | Funciona localmente, sem cadastro e sem gravar respostas |
 | `docs/adr` | Decisões de arquitetura | 6 decisões propostas, aguardando aceite |
 
 ## Como rodar
@@ -21,6 +23,7 @@ Fase 0 e início da fundação. Ainda não há site nem serviço no ar.
 pnpm install
 pnpm typecheck
 pnpm test
+pnpm --filter @cnpjtec/web dev   # abre o Raio-X em http://localhost:3000
 ```
 
 Requer Node 22 e pnpm 10.
