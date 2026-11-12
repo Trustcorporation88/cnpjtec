@@ -443,6 +443,59 @@ button {
   font-size: 0.9375rem;
 }
 
+/* Radar do CNPJ técnico */
+
+.radar {
+  margin-top: 2.25rem;
+  padding: 0.25rem 1.1rem 1.25rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.radar h2 {
+  margin-top: 1rem;
+}
+
+.lado-a-lado {
+  grid-template-columns: 1fr 1fr;
+}
+
+.campo-contato {
+  display: block;
+  margin-top: 1rem;
+}
+
+.campo-contato input {
+  display: block;
+  width: 100%;
+  min-height: 3.5rem;
+  margin-top: 0.35rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+}
+
+.aceite {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.aceite input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.1rem 0 0;
+  accent-color: var(--tinta);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

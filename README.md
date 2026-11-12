@@ -6,7 +6,7 @@ Contador de bolso com IA do MEiSHOP para quem trabalha por conta própria: nanoe
 
 ## Estado atual
 
-Fase 1 em andamento. O Raio-X Fiscal roda localmente. Ainda não há serviço no ar, banco de dados nem agente de IA ligado.
+Fase 1 em andamento. O Raio-X Fiscal está publicado como prévia de testes no Railway. O Radar do CNPJ técnico está pronto e desligado até a configuração de quem responde pelos dados pessoais. Ainda não há agente de IA ligado.
 
 | Pacote | O que é | Estado |
 |---|---|---|
@@ -15,6 +15,7 @@ Fase 1 em andamento. O Raio-X Fiscal roda localmente. Ainda não há serviço no
 | `packages/agente` | Prompt de sistema e contrato das ferramentas do agente (API da Anthropic) | Contrato de 19 ferramentas definido, sem implementação |
 | `packages/conteudo` | Textos em linguagem simples que transformam o resultado do motor em diagnóstico | Trilhas, alertas e pendências cobertos. Textos aguardam revisão do contador |
 | `apps/web` | Site (Next.js) com o Raio-X Fiscal: questionário de uma pergunta por tela e resultado com a regra de cada afirmação | Funciona localmente, sem cadastro e sem gravar respostas |
+| `supabase/migrations` | Estrutura do banco (Supabase, região de São Paulo) | Tabela `radar_inscricoes`, em que a chave pública só inclui e não lê |
 | `docs/adr` | Decisões de arquitetura | 6 decisões propostas, aguardando aceite |
 
 ## Como rodar

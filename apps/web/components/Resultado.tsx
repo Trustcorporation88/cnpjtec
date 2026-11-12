@@ -2,6 +2,7 @@
 
 import { mostrarValor } from "@/lib/dinheiro";
 import type { RespostaDoRaioX } from "@/lib/respostas";
+import { Radar, type DadosDoRadar } from "./Radar";
 
 interface Frase {
   texto: string;
@@ -37,9 +38,13 @@ function Lista({ frases, classe }: { frases: Frase[]; classe: string }) {
 export function Resultado({
   resposta,
   aoRecomecar,
+  radar,
+  uf,
 }: {
   resposta: RespostaDoRaioX;
   aoRecomecar: () => void;
+  radar: DadosDoRadar | null;
+  uf: string;
 }) {
   const d = resposta.diagnostico;
   const fora = d.trilhas.includes("FORA_DO_ALCANCE");
@@ -107,6 +112,10 @@ export function Resultado({
           <p>Estes pontos podem mudar o seu resultado. Quando saírem, a gente atualiza.</p>
           <Lista frases={d.semDefinicao} classe="lista" />
         </section>
+      )}
+
+      {radar && d.trilhas.includes("B_PF_CONTRIBUINTE") && (
+        <Radar dados={radar} trilha="B_PF_CONTRIBUINTE" uf={uf} />
       )}
 
       {d.comContador.length > 0 && (
