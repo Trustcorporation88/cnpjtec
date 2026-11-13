@@ -115,6 +115,14 @@ export function Resultado({
         </section>
       )}
 
+      {!fora && (
+        <p>
+          <Link className="botao" href="/limite">
+            Medir o meu limite mês a mês
+          </Link>
+        </p>
+      )}
+
       {d.trilhas.includes("B_PF_CONTRIBUINTE") && (
         <p>
           <Link className="botao" href="/cnpj-tecnico">

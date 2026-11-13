@@ -526,6 +526,128 @@ button {
   transform: scale(0.7);
 }
 
+/* Medidor de limite */
+
+.campos {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.meses {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.mes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem 0.75rem;
+  padding-block: 0.4rem;
+  border-bottom: 1px solid var(--tinta);
+}
+
+.mes .nome-mes {
+  flex: 0 0 6.5rem;
+  padding-bottom: 0.6rem;
+}
+
+.valor-mes {
+  flex: 1 1 7rem;
+  font-size: 0.9375rem;
+}
+
+.valor-mes input {
+  display: block;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.35rem 0.75rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.invisivel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.medidor {
+  height: 1.6rem;
+  border: 3px solid var(--tinta);
+  background: var(--papel);
+}
+
+.medidor-uso {
+  height: 100%;
+  background: var(--tinta);
+}
+
+.medidor-legenda {
+  margin-top: 0.4rem;
+  font-weight: 700;
+}
+
+.linha-do-ano {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linha-do-ano li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding-block: 0.3rem;
+  font-size: 0.9375rem;
+}
+
+.trilho {
+  position: relative;
+  height: 0.9rem;
+  border: 1px solid var(--tinta);
+}
+
+.enchimento {
+  position: absolute;
+  inset: 0 auto 0 0;
+  max-width: 100%;
+  background: var(--tinta);
+}
+
+li[data-estimado="true"] .enchimento {
+  background: repeating-linear-gradient(90deg, var(--tinta) 0 4px, transparent 4px 7px);
+}
+
+li[data-estoura="true"] .enchimento {
+  background: var(--carimbo);
+}
+
+li[data-estoura="true"][data-estimado="true"] .enchimento {
+  background: repeating-linear-gradient(90deg, var(--carimbo) 0 4px, transparent 4px 7px);
+}
+
+.marca-limite {
+  position: absolute;
+  top: -0.35rem;
+  bottom: -0.35rem;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--tinta);
+}
+
+.acumulado {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
 /* Radar do CNPJ técnico */
 
 .radar {
