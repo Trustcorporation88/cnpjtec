@@ -1,19 +1,22 @@
 /*
-  Direção visual: a placa de preço do comércio popular.
-  Uma única peça forte (a placa amarela com a resposta) e o resto quieto, em preto no branco.
+  Direção visual: as cores do logo ProContador.
+  Uma única peça forte (a placa verde com moldura de bronze, que traz a resposta) e o resto quieto.
   Borda tracejada tem um só significado em todo o site: ponto ainda sem definição.
 */
 :root {
-  --amarelo: #ffd400;
-  --tinta: #000000;
+  /* Paleta do logo ProContador: verde do escudo e bronze da moldura. */
+  --marca-verde: #02322e;
+  --marca-verde-medio: #0b5a4a;
+  --marca-bronze: #a07b55;
+  --bronze-escuro: #7d5c38;
+  --bronze-claro: #f4ecdf;
+  --tinta: #13231f;
   --papel: #ffffff;
-  --caneta: #1438a6;
+  --caneta: #0b5a4a;
   --verde: #0a6b36;
   --carimbo: #b3261e;
-  --apoio: #4d4d4d;
-  /* Cores do logo ProContador. */
-  --marca-verde: #02322e;
-  --marca-bronze: #a07b55;
+  --apoio: #4a5552;
+  --destaque: var(--bronze-claro);
 
   --texto: "Atkinson Hyperlegible", system-ui, sans-serif;
   --placa: "Archivo Variable", "Arial Narrow", sans-serif;
@@ -83,7 +86,7 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--caneta);
+  outline: 3px solid var(--bronze-escuro);
   outline-offset: 3px;
 }
 
@@ -92,7 +95,7 @@ a {
 .aviso-teste {
   margin: 0;
   padding: 0.5rem 1.25rem;
-  background: var(--tinta);
+  background: var(--marca-verde);
   color: var(--papel);
   font-size: 0.9375rem;
   text-align: center;
@@ -105,7 +108,7 @@ a {
   justify-content: space-between;
   gap: 0.35rem 1.25rem;
   padding-block: 1rem;
-  border-bottom: 3px solid var(--tinta);
+  border-bottom: 3px solid var(--marca-bronze);
 }
 
 .topo .marca {
@@ -198,19 +201,20 @@ legend {
 }
 
 .opcao[data-marcado="true"] {
-  background: var(--amarelo);
-  box-shadow: inset 0 0 0 1px var(--tinta);
+  background: var(--destaque);
+  border-color: var(--marca-verde);
+  box-shadow: inset 0 0 0 2px var(--marca-verde);
 }
 
 .opcao input {
   width: 1.5rem;
   height: 1.5rem;
   margin: 0;
-  accent-color: var(--tinta);
+  accent-color: var(--marca-verde);
 }
 
 .opcao:has(input:focus-visible) {
-  outline: 3px solid var(--caneta);
+  outline: 3px solid var(--bronze-escuro);
   outline-offset: 3px;
 }
 
@@ -237,7 +241,7 @@ legend {
 }
 
 .campo-valor:focus-within {
-  outline: 3px solid var(--caneta);
+  outline: 3px solid var(--bronze-escuro);
   outline-offset: 3px;
 }
 
@@ -295,7 +299,7 @@ button {
   padding: 0.75rem 1.5rem;
   border: 0;
   border-radius: 4px;
-  background: var(--tinta);
+  background: var(--marca-verde);
   color: var(--papel);
   font-family: var(--placa);
   font-size: 1.25rem;
@@ -323,13 +327,16 @@ button {
 .placa {
   margin: 0.75rem 0.25rem 1.75rem;
   padding: 1.1rem 1.25rem 1.4rem;
-  background: var(--amarelo);
-  border: 3px solid var(--tinta);
+  background: var(--marca-verde);
+  color: var(--papel);
+  border: 3px solid var(--marca-bronze);
+  box-shadow: 0 0 0 3px var(--marca-verde);
   transform: rotate(-1.2deg);
 }
 
 .placa p {
   margin: 0 0 0.35rem;
+  color: var(--bronze-claro);
   font-size: 1rem;
 }
 
@@ -464,8 +471,8 @@ button {
 }
 
 .fontes li:target {
-  background: var(--amarelo);
-  outline: 6px solid var(--amarelo);
+  background: var(--destaque);
+  outline: 6px solid var(--destaque);
 }
 
 .fonte {
@@ -479,7 +486,7 @@ button {
   display: inline-block;
   padding: 0.8rem 1.25rem;
   border-radius: 4px;
-  background: var(--tinta);
+  background: var(--marca-verde);
   color: var(--papel);
   font-family: var(--placa);
   font-size: 1.125rem;
@@ -506,6 +513,7 @@ button {
 
 .passo::before {
   content: counter(passo);
+  color: var(--bronze-escuro);
   position: absolute;
   left: 1.1rem;
   top: 0.85rem;
@@ -596,7 +604,7 @@ button {
 
 .medidor-uso {
   height: 100%;
-  background: var(--tinta);
+  background: var(--marca-verde-medio);
 }
 
 .medidor-legenda {
@@ -629,11 +637,11 @@ button {
   position: absolute;
   inset: 0 auto 0 0;
   max-width: 100%;
-  background: var(--tinta);
+  background: var(--marca-verde-medio);
 }
 
 li[data-estimado="true"] .enchimento {
-  background: repeating-linear-gradient(90deg, var(--tinta) 0 4px, transparent 4px 7px);
+  background: repeating-linear-gradient(90deg, var(--marca-verde-medio) 0 4px, transparent 4px 7px);
 }
 
 li[data-estoura="true"] .enchimento {
@@ -662,8 +670,8 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
 
 .aviso-local {
   padding: 0.75rem 1rem;
-  background: var(--amarelo);
-  border: 2px solid var(--tinta);
+  background: var(--destaque);
+  border: 2px solid var(--marca-bronze);
   border-radius: 4px;
   font-size: 1rem;
 }
@@ -798,8 +806,8 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
 .caminho[data-cabe="true"] .veredito {
   display: inline-block;
   padding: 0.1rem 0.5rem;
-  background: var(--amarelo);
-  color: var(--tinta);
+  background: var(--marca-verde);
+  color: var(--papel);
 }
 
 /* Radar do CNPJ técnico */
@@ -852,7 +860,7 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
   width: 1.5rem;
   height: 1.5rem;
   margin: 0.1rem 0 0;
-  accent-color: var(--tinta);
+  accent-color: var(--marca-verde);
 }
 
 @media (prefers-reduced-motion: no-preference) {
