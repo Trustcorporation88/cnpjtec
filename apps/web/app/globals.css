@@ -11,6 +11,9 @@
   --verde: #0a6b36;
   --carimbo: #b3261e;
   --apoio: #4d4d4d;
+  /* Cores do logo ProContador. */
+  --marca-verde: #02322e;
+  --marca-bronze: #a07b55;
 
   --texto: "Atkinson Hyperlegible", system-ui, sans-serif;
   --placa: "Archivo Variable", "Arial Narrow", sans-serif;
@@ -98,7 +101,7 @@ a {
 .topo {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 0.35rem 1.25rem;
   padding-block: 1rem;
@@ -106,8 +109,15 @@ a {
 }
 
 .topo .marca {
-  color: var(--tinta);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--marca-verde);
   text-decoration: none;
+}
+
+.topo .marca img {
+  display: block;
 }
 
 .topo nav {

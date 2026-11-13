@@ -3,6 +3,7 @@ import "@fontsource/atkinson-hyperlegible/700.css";
 import "@fontsource-variable/archivo/wdth.css";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -27,8 +28,9 @@ export default function Layout({ children }: { children: ReactNode }) {
           Versão de testes. As regras ainda estão sendo conferidas por um contador.
         </p>
         <header className="topo">
-          <Link className="marca" href="/">
-            ProContador
+          <Link className="marca" href="/" aria-label="ProContador, página inicial">
+            <Image src="/marca/escudo.png" alt="" width={37} height={48} priority />
+            <span>ProContador</span>
           </Link>
           <nav aria-label="Principal">
             <Link href="/">Minha situação</Link>
