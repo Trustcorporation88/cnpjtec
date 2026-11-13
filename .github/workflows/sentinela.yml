@@ -1,0 +1,52 @@
+name: Sentinela legislativa
+
+on:
+  schedule:
+    # Todo dia às 9h20 de Brasília (12h20 UTC).
+    - cron: "20 12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Recuperar a última leitura
+        uses: actions/cache/restore@v4
+        with:
+          path: estado-sentinela.json
+          key: sentinela-${{ github.run_id }}
+          restore-keys: sentinela-
+      - name: Ler as fontes
+        run: node packages/sentinela/src/verificar.mjs estado-sentinela.json achados.json
+      - name: Guardar a leitura de hoje
+        uses: actions/cache/save@v4
+        with:
+          path: estado-sentinela.json
+          key: sentinela-${{ github.run_id }}
+      - name: Abrir avisos
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create sentinela --color FFD400 --description "Fonte oficial mudou" 2>/dev/null || true
+          node --input-type=module -e '
+            import { readFileSync, writeFileSync } from "node:fs";
+            import { textoDoAviso } from "./packages/sentinela/src/comparar.mjs";
+            const achados = JSON.parse(readFileSync("achados.json", "utf8"));
+            achados.forEach((a, i) => {
+              writeFileSync(`aviso-${i}.md`, textoDoAviso(a));
+              writeFileSync(`titulo-${i}.txt`, `Sentinela: ${a.nome}`);
+            });
+            writeFileSync("total.txt", String(achados.length));
+          '
+          total=$(cat total.txt)
+          for ((i=0; i<total; i++)); do
+            gh issue create --title "$(cat titulo-$i.txt)" --body-file "aviso-$i.md" --label sentinela
+          done

@@ -1,5 +1,5 @@
 {
-  "versao": "0.2.0",
+  "versao": "0.3.0",
   "atualizadoEm": "2026-11-12",
   "parametros": {
     "limiteMeiAnual": {
@@ -423,6 +423,33 @@
       "status": "EM_VIGOR",
       "conferencia": "NAO_CONFERIDA",
       "observacao": "Dia do vencimento ainda não conferido no texto da resolução."
+    },
+    {
+      "id": "R33",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "O MEI entrega a declaração anual (DASN-SIMEI) até 31 de maio do ano seguinte, informando a receita bruta do ano separada em comércio e indústria e em prestação de serviços, e se teve empregado.",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "Resolução CGSN 140/2018, conforme orientações do Sebrae e de portais contábeis",
+      "status": "EM_VIGOR",
+      "conferencia": "SECUNDARIA",
+      "observacao": "Receita bruta é tudo o que entrou, com ou sem nota, sem descontar gastos."
+    },
+    {
+      "id": "R34",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "O MEI é dispensado de emitir nota fiscal na venda para consumidor final pessoa física, mas precisa emitir quando quem compra é empresa (tem CNPJ).",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "LC 123/2006, art. 26, § 6º",
+      "status": "EM_VIGOR",
+      "conferencia": "NAO_CONFERIDA"
     }
   ]
 }

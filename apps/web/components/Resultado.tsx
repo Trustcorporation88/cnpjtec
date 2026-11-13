@@ -131,6 +131,22 @@ export function Resultado({
         </p>
       )}
 
+      {d.fazerAgora.some((f) => f.regra === "R23" || f.regra === "R24" || f.regra === "R25") && (
+        <p>
+          <Link className="botao" href="/cadesp">
+            Ver como tirar a inscrição estadual
+          </Link>
+        </p>
+      )}
+
+      {(d.trilhas.includes("C_MEI_SERVICO") || d.trilhas.includes("D_MEI_REVENDA")) && (
+        <p>
+          <Link className="botao" href="/caderno">
+            Abrir o caderno de vendas
+          </Link>
+        </p>
+      )}
+
       {(d.trilhas.includes("C_MEI_SERVICO") || d.trilhas.includes("D_MEI_REVENDA")) && (
         <p>
           <Link className="botao" href="/das">
