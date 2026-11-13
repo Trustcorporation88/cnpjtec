@@ -7,6 +7,7 @@ export const StatusRegra = z.enum([
   "PENDENTE",
   "ANUNCIADO",
   "A_CONFIRMAR",
+  "ESTIMATIVA",
 ]);
 
 /** Até onde a fonte foi conferida por nós. */
@@ -48,6 +49,11 @@ export const Parametros = z
     fracaoLimiteNano: Parametro,
     /** Fração da receita de transporte de passageiros e entrega que entra no teste do nano. */
     fracaoReceitaTransporteEntrega: Parametro,
+    /** Salário mínimo por ano-calendário, base do INSS do MEI. */
+    salarioMinimo: z.record(z.string().regex(/^\d{4}$/), Parametro),
+    fracaoInssMei: Parametro,
+    icmsMei: Parametro,
+    issMei: Parametro,
   })
   .strict();
 

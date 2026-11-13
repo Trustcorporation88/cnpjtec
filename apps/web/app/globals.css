@@ -757,6 +757,41 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
   color: var(--carimbo);
 }
 
+/* Simulador */
+
+.caminho {
+  margin-top: 1.5rem;
+  padding: 0.25rem 1.1rem 1rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.caminho h2 {
+  margin-top: 1rem;
+}
+
+.caminho[data-cabe="false"] {
+  border-width: 2px;
+  color: var(--apoio);
+}
+
+.caminho[data-cabe="opcional"] {
+  border-style: dashed;
+  border-width: 2px;
+}
+
+.veredito {
+  margin-top: 0.35rem;
+  font-weight: 700;
+}
+
+.caminho[data-cabe="true"] .veredito {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--amarelo);
+  color: var(--tinta);
+}
+
 /* Radar do CNPJ técnico */
 
 .radar {
