@@ -7,7 +7,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "MEiSHOP: imposto de quem trabalha por conta própria",
+  title: "ProContador: imposto de quem trabalha por conta própria",
   description:
     "Responda poucas perguntas e descubra o que muda para você em 2027: CNPJ técnico, MEI, nota fiscal e inscrição estadual.",
   robots: { index: false, follow: false },
@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </p>
         <header className="topo">
           <Link className="marca" href="/">
-            MEiSHOP
+            ProContador
           </Link>
           <nav aria-label="Principal">
             <Link href="/">Minha situação</Link>

@@ -147,7 +147,7 @@ export function Caderno() {
         anual do MEI pede.
       </p>
       <p className="aviso-local">
-        As vendas ficam guardadas só neste celular ou computador. Ninguém mais vê, nem o MEiSHOP. Salve
+        As vendas ficam guardadas só neste celular ou computador. Ninguém mais vê, nem o ProContador. Salve
         uma cópia de vez em quando, para não perder se trocar de aparelho.
       </p>
       {carregado && !guardou && (
@@ -311,7 +311,7 @@ export function Caderno() {
           <button type="button" className="secundario" onClick={() => baixar(`vendas-${ano}.csv`, "﻿" + planilhaDoAno(caderno, ano), "text/csv;charset=utf-8")}>
             Baixar a planilha de {ano}
           </button>
-          <button type="button" className="secundario" onClick={() => baixar(`caderno-meishop-${hoje()}.json`, JSON.stringify(caderno), "application/json")}>
+          <button type="button" className="secundario" onClick={() => baixar(`caderno-procontador-${hoje()}.json`, JSON.stringify(caderno), "application/json")}>
             Salvar cópia do caderno
           </button>
           <button type="button" className="secundario" onClick={() => arquivo.current?.click()}>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Simulador } from "@/components/Simulador";
 
 export const metadata: Metadata = {
-  title: "Nano, MEI ou CNPJ técnico? | MEiSHOP",
+  title: "Nano, MEI ou CNPJ técnico? | ProContador",
   description: "Compare, com os seus números, o que cada caminho pede e quanto custa.",
 };
 

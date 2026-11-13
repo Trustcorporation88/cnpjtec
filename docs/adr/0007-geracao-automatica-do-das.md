@@ -23,7 +23,7 @@ O que a documentação pública do Serpro confirma (consultada em 12/11/2026):
 
 ## O que falta para implementar
 
-1. **Credenciais do Integra Contador**: contratação na Loja Serpro com o e-CNPJ do MEiSHOP, que devolve Consumer Key e Consumer Secret. Ou, se a consultora.meishop.com.br já gera o DAS por um serviço próprio, o acesso a esse serviço.
+1. **Credenciais do Integra Contador**: contratação na Loja Serpro com o e-CNPJ do ProContador (CNPJ 10.657.629/0001-62), que devolve Consumer Key e Consumer Secret. Ou, se a consultora.meishop.com.br já gera o DAS por um serviço próprio, o acesso a esse serviço.
 2. **Formato completo da resposta e fluxo de autenticação**: as páginas da documentação bloqueiam leitura automática. Alguém precisa abrir a documentação ou rodar uma chamada no ambiente de testes para fecharmos o contrato.
 3. **Autorização do MEI**: confirmar se a emissão exige procuração eletrônica ou só o CNPJ.
 4. **Canal de envio**: WhatsApp Business ou e-mail transacional, para o envio mensal.

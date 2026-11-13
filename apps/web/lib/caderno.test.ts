@@ -43,3 +43,22 @@ describe("caderno", () => {
     expect(linhas[1]).toBe(`10/03/2026;Produto;Pessoa física;80,50;"'=HYPERLINK(""x"")"`);
   });
 });
+
+describe("migração da chave antiga", () => {
+  it("lê o caderno salvo com a marca antiga, grava na chave nova e apaga a antiga", async () => {
+    const dados = new Map<string, string>([["meishop.caderno.v1", JSON.stringify({ versao: 1, vendas: [venda] })]]);
+    (globalThis as { window?: unknown }).window = {
+      localStorage: {
+        getItem: (k: string) => dados.get(k) ?? null,
+        setItem: (k: string, v: string) => void dados.set(k, v),
+        removeItem: (k: string) => void dados.delete(k),
+      },
+    };
+    const { carregarDoAparelho } = await import("./caderno");
+    expect(carregarDoAparelho().vendas).toHaveLength(1);
+    expect(dados.has("meishop.caderno.v1")).toBe(false);
+    expect(dados.has("procontador.caderno.v1")).toBe(true);
+    expect(carregarDoAparelho().vendas).toHaveLength(1);
+    delete (globalThis as { window?: unknown }).window;
+  });
+});

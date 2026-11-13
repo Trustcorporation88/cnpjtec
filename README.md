@@ -1,6 +1,6 @@
 # cnpjtec
 
-Contador de bolso com IA do MEiSHOP para quem trabalha por conta própria: nanoempreendedor, pessoa física com CNPJ técnico, MEI prestador de serviço e MEI revendedor (Natura, Avon, Ambev e outras marcas).
+Contador de bolso com IA do ProContador para quem trabalha por conta própria: nanoempreendedor, pessoa física com CNPJ técnico, MEI prestador de serviço e MEI revendedor (Natura, Avon, Ambev e outras marcas).
 
 **Regra principal:** a IA conversa, entende, explica e opera. Quem decide a situação fiscal de alguém e calcula qualquer valor é o motor de regras determinístico, com fonte e vigência.
 
