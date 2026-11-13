@@ -123,6 +123,14 @@ export function Resultado({
         </p>
       )}
 
+      {(d.trilhas.includes("A_NANO") || d.trilhas.includes("B_PF_CONTRIBUINTE")) && (
+        <p>
+          <Link className="botao" href="/simulador">
+            Comparar nano, MEI e CNPJ técnico
+          </Link>
+        </p>
+      )}
+
       {d.trilhas.includes("B_PF_CONTRIBUINTE") && (
         <p>
           <Link className="botao" href="/cnpj-tecnico">

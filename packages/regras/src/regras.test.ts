@@ -12,26 +12,36 @@ describe("base de regras", () => {
   });
 
   it("todo parâmetro aponta para uma regra existente", () => {
-    const { limiteMeiAnual, fracaoLimiteNano, fracaoReceitaTransporteEntrega } =
-      baseDeRegras.parametros;
+    const p = baseDeRegras.parametros;
     const referencias = [
-      ...Object.values(limiteMeiAnual).map((p) => p.regra),
-      fracaoLimiteNano.regra,
-      fracaoReceitaTransporteEntrega.regra,
+      ...Object.values(p.limiteMeiAnual).map((x) => x.regra),
+      ...Object.values(p.salarioMinimo).map((x) => x.regra),
+      p.fracaoLimiteNano.regra,
+      p.fracaoReceitaTransporteEntrega.regra,
+      p.fracaoInssMei.regra,
+      p.icmsMei.regra,
+      p.issMei.regra,
     ];
     for (const id of referencias) expect(() => buscarRegra(id)).not.toThrow();
   });
 
   it("nenhum parâmetro numérico se apoia em regra pendente", () => {
     const incertas = new Set(regrasIncertas().map((r) => r.id));
-    const { limiteMeiAnual, fracaoLimiteNano, fracaoReceitaTransporteEntrega } =
-      baseDeRegras.parametros;
+    const p = baseDeRegras.parametros;
     const referencias = [
-      ...Object.values(limiteMeiAnual).map((p) => p.regra),
-      fracaoLimiteNano.regra,
-      fracaoReceitaTransporteEntrega.regra,
+      ...Object.values(p.limiteMeiAnual).map((x) => x.regra),
+      ...Object.values(p.salarioMinimo).map((x) => x.regra),
+      p.fracaoLimiteNano.regra,
+      p.fracaoReceitaTransporteEntrega.regra,
+      p.fracaoInssMei.regra,
+      p.icmsMei.regra,
+      p.issMei.regra,
     ];
     for (const id of referencias) expect(incertas.has(id)).toBe(false);
+  });
+
+  it("parâmetro estimado fica marcado como estimativa", () => {
+    expect(buscarRegra(baseDeRegras.parametros.salarioMinimo["2027"]!.regra).status).toBe("ESTIMATIVA");
   });
 
   it("regra sem norma nunca aparece como em vigor", () => {

@@ -172,4 +172,5 @@ export const rotuloDoStatus: Record<string, string> = {
   PENDENTE: "Ainda sem definição",
   ANUNCIADO: "Anunciado, sem norma publicada",
   A_CONFIRMAR: "Em conferência",
+  ESTIMATIVA: "Estimativa oficial, ainda não definitiva",
 };
