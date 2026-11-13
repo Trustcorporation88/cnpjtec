@@ -648,6 +648,150 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
   text-align: right;
 }
 
+/* Caderno de vendas */
+
+.aviso-local {
+  padding: 0.75rem 1rem;
+  background: var(--amarelo);
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.nova-venda {
+  margin-top: 1.5rem;
+  padding: 0.25rem 1.1rem 1.25rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.nova-venda fieldset {
+  margin-top: 1rem;
+}
+
+.campo-uf input {
+  width: 100%;
+  min-height: 3.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+  font-size: 1.125rem;
+}
+
+.confirmacao {
+  margin-block: 1rem 0;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--verde);
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.declaracao {
+  margin-top: 2rem;
+}
+
+.conta .total {
+  font-weight: 700;
+}
+
+.mes-vendas h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.25rem 0 0.25rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--tinta);
+  font-family: var(--placa);
+  font-stretch: 88%;
+  font-size: 1.125rem;
+}
+
+.mes-vendas ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mes-vendas li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 0.75rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.venda-info small {
+  display: block;
+  color: var(--apoio);
+  font-size: 0.9375rem;
+}
+
+.venda-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.mes-vendas li > .secundario,
+.venda-acoes {
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-height: 2.25rem;
+  padding: 0;
+  font-size: 0.9375rem;
+}
+
+.venda-acoes {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.venda-acoes .secundario {
+  min-height: 2.25rem;
+  padding: 0;
+}
+
+.perigo {
+  color: var(--carimbo);
+}
+
+/* Simulador */
+
+.caminho {
+  margin-top: 1.5rem;
+  padding: 0.25rem 1.1rem 1rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.caminho h2 {
+  margin-top: 1rem;
+}
+
+.caminho[data-cabe="false"] {
+  border-width: 2px;
+  color: var(--apoio);
+}
+
+.caminho[data-cabe="opcional"] {
+  border-style: dashed;
+  border-width: 2px;
+}
+
+.veredito {
+  margin-top: 0.35rem;
+  font-weight: 700;
+}
+
+.caminho[data-cabe="true"] .veredito {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--amarelo);
+  color: var(--tinta);
+}
+
 /* Radar do CNPJ técnico */
 
 .radar {

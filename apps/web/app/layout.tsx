@@ -32,9 +32,12 @@ export default function Layout({ children }: { children: ReactNode }) {
           </Link>
           <nav aria-label="Principal">
             <Link href="/">Minha situação</Link>
+            <Link href="/simulador">Comparar</Link>
+            <Link href="/caderno">Caderno</Link>
             <Link href="/limite">Meu limite</Link>
             <Link href="/das">Guia do MEI</Link>
             <Link href="/cnpj-tecnico">CNPJ técnico</Link>
+            <Link href="/cadesp">Inscrição estadual</Link>
           </nav>
         </header>
         <main>{children}</main>

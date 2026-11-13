@@ -1,5 +1,5 @@
 {
-  "versao": "0.2.0",
+  "versao": "0.4.0",
   "atualizadoEm": "2026-11-12",
   "parametros": {
     "limiteMeiAnual": {
@@ -19,6 +19,28 @@
     "fracaoReceitaTransporteEntrega": {
       "valor": "0.25",
       "regra": "R06"
+    },
+    "salarioMinimo": {
+      "2026": {
+        "valor": "1621.00",
+        "regra": "R36"
+      },
+      "2027": {
+        "valor": "1741.00",
+        "regra": "R37"
+      }
+    },
+    "fracaoInssMei": {
+      "valor": "0.05",
+      "regra": "R35"
+    },
+    "icmsMei": {
+      "valor": "1.00",
+      "regra": "R35"
+    },
+    "issMei": {
+      "valor": "5.00",
+      "regra": "R35"
     }
   },
   "regras": [
@@ -423,6 +445,73 @@
       "status": "EM_VIGOR",
       "conferencia": "NAO_CONFERIDA",
       "observacao": "Dia do vencimento ainda não conferido no texto da resolução."
+    },
+    {
+      "id": "R33",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "O MEI entrega a declaração anual (DASN-SIMEI) até 31 de maio do ano seguinte, informando a receita bruta do ano separada em comércio e indústria e em prestação de serviços, e se teve empregado.",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "Resolução CGSN 140/2018, conforme orientações do Sebrae e de portais contábeis",
+      "status": "EM_VIGOR",
+      "conferencia": "SECUNDARIA",
+      "observacao": "Receita bruta é tudo o que entrou, com ou sem nota, sem descontar gastos."
+    },
+    {
+      "id": "R34",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "O MEI é dispensado de emitir nota fiscal na venda para consumidor final pessoa física, mas precisa emitir quando quem compra é empresa (tem CNPJ).",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "LC 123/2006, art. 26, § 6º",
+      "status": "EM_VIGOR",
+      "conferencia": "NAO_CONFERIDA"
+    },
+    {
+      "id": "R35",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "A guia mensal do MEI (DAS) soma 5% do salário mínimo para o INSS, mais R$ 1,00 de ICMS para quem vende mercadoria e R$ 5,00 de ISS para quem presta serviço. O valor não depende do faturamento.",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "LC 123/2006, art. 18-A, § 3º, conforme Sebrae e portais contábeis",
+      "status": "EM_VIGOR",
+      "conferencia": "SECUNDARIA",
+      "observacao": "MEI caminhoneiro tem INSS de 12% e não está coberto."
+    },
+    {
+      "id": "R36",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "Salário mínimo de 2026: R$ 1.621,00.",
+      "vigenciaInicio": "2026-01-01",
+      "vigenciaFim": "2026-12-31",
+      "fonte": "Decreto 12.797/2025",
+      "status": "EM_VIGOR",
+      "conferencia": "SECUNDARIA"
+    },
+    {
+      "id": "R37",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "Salário mínimo de 2027 previsto em R$ 1.741,00 no projeto de Orçamento. O valor definitivo sai por decreto em dezembro de 2026.",
+      "vigenciaInicio": "2027-01-01",
+      "vigenciaFim": "2027-12-31",
+      "fonte": "Projeto de Lei Orçamentária Anual de 2027, enviado em 31/8/2026",
+      "status": "ESTIMATIVA",
+      "conferencia": "SECUNDARIA"
     }
   ]
 }
