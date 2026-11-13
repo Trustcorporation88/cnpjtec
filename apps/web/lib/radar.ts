@@ -35,7 +35,7 @@ export function configuracaoDoRadar(
 /** Texto que a pessoa aceita ao pedir o aviso. */
 export function textoDoConsentimento(c: Controlador): string {
   return (
-    `Quero que o MEiSHOP me avise quando a Receita Federal abrir o canal do CNPJ técnico. ` +
+    `Quero que o ProContador me avise quando a Receita Federal abrir o canal do CNPJ técnico. ` +
     `Meu contato será usado só para esse aviso e posso pedir para sair quando quiser, pelo e-mail ${c.email}. ` +
     `Quem responde pelos meus dados é ${c.nome}, CNPJ ${c.cnpj}.`
   );

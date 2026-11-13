@@ -4,7 +4,7 @@ import { Fontes } from "@/components/Fontes";
 import { citar } from "@/lib/regras-tela";
 
 export const metadata: Metadata = {
-  title: "A guia do MEI (DAS) | MEiSHOP",
+  title: "A guia do MEI (DAS) | ProContador",
   description: "Como gerar a guia mensal do MEI pelo canal oficial da Receita Federal, sem pagar nada.",
 };
 
@@ -78,7 +78,7 @@ export default function PaginaDoDas() {
         <ul className="lista alerta">
           <li>Gerar a guia é de graça. Desconfie de site que cobra por isso.</li>
           <li>Confira se o endereço do site termina em gov.br antes de digitar o seu CNPJ.</li>
-          <li>O MEiSHOP não cobra para mostrar este caminho.</li>
+          <li>O ProContador não cobra para mostrar este caminho.</li>
         </ul>
       </section>
 

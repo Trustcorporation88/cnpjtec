@@ -20,7 +20,7 @@ const agora = {};
 for (const f of fontes) {
   try {
     const r = await fetch(f.url, {
-      headers: { "User-Agent": "MEiSHOP-sentinela/0.1 (monitoramento de legislação)" },
+      headers: { "User-Agent": "ProContador-sentinela/0.1 (monitoramento de legislação)" },
       signal: AbortSignal.timeout(30000),
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);

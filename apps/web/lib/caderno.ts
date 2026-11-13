@@ -11,7 +11,9 @@ export interface Caderno {
   vendas: VendaGuardada[];
 }
 
-const CHAVE = "meishop.caderno.v1";
+const CHAVE = "procontador.caderno.v1";
+/** Chave usada antes da troca de marca. Lida uma vez e migrada. */
+const CHAVE_ANTIGA = "meishop.caderno.v1";
 
 function valida(v: unknown): v is VendaGuardada {
   if (typeof v !== "object" || v === null) return false;
@@ -36,10 +38,10 @@ export function lerCaderno(texto: string | null): { caderno: Caderno; descartada
   try {
     bruto = JSON.parse(texto);
   } catch {
-    throw new Error("O arquivo não é um caderno do MEiSHOP.");
+    throw new Error("O arquivo não é um caderno do ProContador.");
   }
   const lista = (bruto as { vendas?: unknown })?.vendas;
-  if (!Array.isArray(lista)) throw new Error("O arquivo não é um caderno do MEiSHOP.");
+  if (!Array.isArray(lista)) throw new Error("O arquivo não é um caderno do ProContador.");
   const vendas = lista.filter(valida);
   return { caderno: { versao: 1, vendas }, descartadas: lista.length - vendas.length };
 }
@@ -52,7 +54,12 @@ export function juntarCadernos(atual: Caderno, novo: Caderno): Caderno {
 
 export function carregarDoAparelho(): Caderno {
   try {
-    return lerCaderno(window.localStorage.getItem(CHAVE)).caderno;
+    const atual = window.localStorage.getItem(CHAVE);
+    if (atual !== null) return lerCaderno(atual).caderno;
+    const antigo = window.localStorage.getItem(CHAVE_ANTIGA);
+    const caderno = lerCaderno(antigo).caderno;
+    if (antigo !== null && guardarNoAparelho(caderno)) window.localStorage.removeItem(CHAVE_ANTIGA);
+    return caderno;
   } catch {
     return { versao: 1, vendas: [] };
   }

@@ -5,7 +5,7 @@ import { Fontes } from "@/components/Fontes";
 import { citar, dataDaRegra } from "@/lib/regras-tela";
 
 export const metadata: Metadata = {
-  title: "Inscrição estadual (CADESP) para quem revende | MEiSHOP",
+  title: "Inscrição estadual (CADESP) para quem revende | ProContador",
   description:
     "Quem compra produtos para revender em São Paulo precisa de inscrição estadual. Veja como consultar, pedir e regularizar.",
 };

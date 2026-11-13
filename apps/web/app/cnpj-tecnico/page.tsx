@@ -9,7 +9,7 @@ import { citar, dataDaRegra } from "@/lib/regras-tela";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "O caminho do CNPJ técnico | MEiSHOP",
+  title: "O caminho do CNPJ técnico | ProContador",
   description:
     "O que é o CNPJ técnico, quem precisa, o que já dá para fazer hoje e o que ainda depende da Receita Federal.",
 };
@@ -97,7 +97,7 @@ export default function PaginaDoCnpjTecnico() {
         <ul className="lista alerta">
           <li>Não pague ninguém para tirar o CNPJ técnico. Ele é gratuito e sai pela Receita.</li>
           <li>Não passe a senha da sua conta gov.br para outra pessoa nem para outro site.</li>
-          <li>O MEiSHOP não emite esse número. A gente explica, avisa e acompanha você.</li>
+          <li>O ProContador não emite esse número. A gente explica, avisa e acompanha você.</li>
         </ul>
       </section>
 
