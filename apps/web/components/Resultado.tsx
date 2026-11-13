@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { mostrarValor } from "@/lib/dinheiro";
 import type { RespostaDoRaioX } from "@/lib/respostas";
+import { Radar, type DadosDoRadar } from "./Radar";
 
 interface Frase {
   texto: string;
@@ -37,9 +39,13 @@ function Lista({ frases, classe }: { frases: Frase[]; classe: string }) {
 export function Resultado({
   resposta,
   aoRecomecar,
+  radar,
+  uf,
 }: {
   resposta: RespostaDoRaioX;
   aoRecomecar: () => void;
+  radar: DadosDoRadar | null;
+  uf: string;
 }) {
   const d = resposta.diagnostico;
   const fora = d.trilhas.includes("FORA_DO_ALCANCE");
@@ -107,6 +113,58 @@ export function Resultado({
           <p>Estes pontos podem mudar o seu resultado. Quando saírem, a gente atualiza.</p>
           <Lista frases={d.semDefinicao} classe="lista" />
         </section>
+      )}
+
+      {!fora && (
+        <p>
+          <Link className="botao" href="/limite">
+            Medir o meu limite mês a mês
+          </Link>
+        </p>
+      )}
+
+      {(d.trilhas.includes("A_NANO") || d.trilhas.includes("B_PF_CONTRIBUINTE")) && (
+        <p>
+          <Link className="botao" href="/simulador">
+            Comparar nano, MEI e CNPJ técnico
+          </Link>
+        </p>
+      )}
+
+      {d.trilhas.includes("B_PF_CONTRIBUINTE") && (
+        <p>
+          <Link className="botao" href="/cnpj-tecnico">
+            Ver o caminho do CNPJ técnico
+          </Link>
+        </p>
+      )}
+
+      {d.fazerAgora.some((f) => f.regra === "R23" || f.regra === "R24" || f.regra === "R25") && (
+        <p>
+          <Link className="botao" href="/cadesp">
+            Ver como tirar a inscrição estadual
+          </Link>
+        </p>
+      )}
+
+      {(d.trilhas.includes("C_MEI_SERVICO") || d.trilhas.includes("D_MEI_REVENDA")) && (
+        <p>
+          <Link className="botao" href="/caderno">
+            Abrir o caderno de vendas
+          </Link>
+        </p>
+      )}
+
+      {(d.trilhas.includes("C_MEI_SERVICO") || d.trilhas.includes("D_MEI_REVENDA")) && (
+        <p>
+          <Link className="botao" href="/das">
+            Ver como gerar a guia do MEI
+          </Link>
+        </p>
+      )}
+
+      {radar && d.trilhas.includes("B_PF_CONTRIBUINTE") && (
+        <Radar dados={radar} trilha="B_PF_CONTRIBUINTE" uf={uf} />
       )}
 
       {d.comContador.length > 0 && (

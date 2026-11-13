@@ -1,0 +1,12 @@
+[
+  { "id": "rc-33853", "nome": "Resposta à Consulta Sefaz-SP 33.853/2026", "url": "https://legislacao.fazenda.sp.gov.br/Paginas/RC33853_2026.aspx", "regras": ["R23", "R24", "R28"] },
+  { "id": "ricms-527", "nome": "RICMS-SP, artigo 527 (multas)", "url": "https://legislacao.fazenda.sp.gov.br/Paginas/art527.aspx", "regras": ["R26", "R27"] },
+  { "id": "sefaz-ie", "nome": "Sefaz-SP, abertura de inscrição estadual", "url": "https://portal.fazenda.sp.gov.br/servicos/cadesp/Paginas/Abertura-de-Empresas.aspx", "regras": ["R25"] },
+  { "id": "rfb-pf-2027", "nome": "Receita Federal, CNPJ de pessoa física a partir de 2027", "url": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/emissao-do-cnpj-e-de-documentos-fiscais-por-pessoas-fisicas-contribuintes-da-cbs-comecara-em-1o-de-janeiro-de-2027", "regras": ["R11", "R13"] },
+  { "id": "rfb-nano-mei", "nome": "Receita Federal, simplificações para nano e MEI", "url": "https://www.gov.br/receitafederal/pt-br/assuntos/noticias/2026/outubro/novas-medidas-simplificam-obrigacoes-da-reforma-tributaria-para-nanoempreendedores-e-meis", "regras": ["R07", "R18"] },
+  { "id": "mf-11-11", "nome": "Ministério da Fazenda, próximos passos da Reforma (11/11/2026)", "url": "https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/novembro/receita-federal-e-orgaos-parceiros-detalham-proximos-passos-da-reforma-tributaria", "regras": ["R12", "R31"] },
+  { "id": "lc-214", "nome": "Lei Complementar 214/2025 (texto compilado)", "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp214compilado.htm", "regras": ["R01", "R02", "R03", "R06"] },
+  { "id": "lc-238", "nome": "Lei Complementar 238/2026", "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp238.htm", "regras": ["R14", "R15", "R16", "R17"] },
+  { "id": "d-12955", "nome": "Decreto 12.955/2026", "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2026/decreto/d12955.htm", "regras": ["R06", "R11"] },
+  { "id": "cgibs-noticias", "nome": "CGIBS, página inicial (novas normas)", "url": "https://www.cgibs.gov.br/", "regras": ["R07", "R13"] }
+]

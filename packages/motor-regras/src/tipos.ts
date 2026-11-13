@@ -42,6 +42,10 @@ export interface ParametrosDoMotor {
   limiteMeiAnual: Record<string, { valor: DecimalTexto; regra: string }>;
   fracaoLimiteNano: { valor: DecimalTexto; regra: string };
   fracaoReceitaTransporteEntrega: { valor: DecimalTexto; regra: string };
+  salarioMinimo: Record<string, { valor: DecimalTexto; regra: string }>;
+  fracaoInssMei: { valor: DecimalTexto; regra: string };
+  icmsMei: { valor: DecimalTexto; regra: string };
+  issMei: { valor: DecimalTexto; regra: string };
 }
 
 export type CodigoAlerta =

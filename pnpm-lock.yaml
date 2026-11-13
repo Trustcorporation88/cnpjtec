@@ -82,6 +82,15 @@ importers:
         specifier: ^3.23.8
         version: 3.25.76
 
+  packages/sentinela:
+    devDependencies:
+      '@cnpjtec/regras':
+        specifier: workspace:*
+        version: link:../regras
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.20.5
+
 packages:
 
   '@emnapi/runtime@1.11.3':

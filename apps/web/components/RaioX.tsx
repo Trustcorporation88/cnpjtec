@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, type FormEvent } from "react";
 import { lerValor } from "@/lib/dinheiro";
 import type { RespostaDoRaioX } from "@/lib/respostas";
+import type { DadosDoRadar } from "./Radar";
 import { Resultado } from "./Resultado";
 
 type TipoAtividade =
@@ -88,7 +89,7 @@ const SIM_NAO: { valor: SimNao; rotulo: string }[] = [
   { valor: "nao_sei", rotulo: "Não sei" },
 ];
 
-export function RaioX({ ano }: { ano: number }) {
+export function RaioX({ ano, radar }: { ano: number; radar: DadosDoRadar | null }) {
   const [estado, setEstado] = useState<Estado>({ tipos: [], valores: {}, uf: "SP" });
   const [indice, setIndice] = useState(0);
   const [erro, setErro] = useState<string | null>(null);
@@ -177,7 +178,9 @@ export function RaioX({ ano }: { ano: number }) {
     irPara(0);
   }
 
-  if (resposta) return <Resultado resposta={resposta} aoRecomecar={recomecar} />;
+  if (resposta) {
+    return <Resultado resposta={resposta} aoRecomecar={recomecar} radar={radar} uf={estado.uf} />;
+  }
 
   const atividade = passo.id === "valor" ? ATIVIDADES.find((a) => a.tipo === passo.tipo) : undefined;
 
@@ -228,7 +231,7 @@ export function RaioX({ ano }: { ano: number }) {
         {passo.id === "temMei" && (
           <>
             <p className="dica">
-              MEI é o cadastro de microempreendedor. Quem tem paga uma guia fixa todo mês.
+              MEI é o cadastro de microempreendedor. Quem é MEI paga um valor único todo mês.
             </p>
             <div className="opcoes">
               {SIM_NAO.map((o) => (

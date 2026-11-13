@@ -3,10 +3,12 @@ import "@fontsource/atkinson-hyperlegible/700.css";
 import "@fontsource-variable/archivo/wdth.css";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Raio-X Fiscal MEiSHOP",
+  title: "ProContador: imposto de quem trabalha por conta própria",
   description:
     "Responda poucas perguntas e descubra o que muda para você em 2027: CNPJ técnico, MEI, nota fiscal e inscrição estadual.",
   robots: { index: false, follow: false },
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#ffd400",
+  themeColor: "#02322e",
 };
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -26,8 +28,19 @@ export default function Layout({ children }: { children: ReactNode }) {
           Versão de testes. As regras ainda estão sendo conferidas por um contador.
         </p>
         <header className="topo">
-          <span className="marca">MEiSHOP</span>
-          <span className="produto">Raio-X Fiscal</span>
+          <Link className="marca" href="/" aria-label="ProContador, página inicial">
+            <Image src="/marca/escudo.png" alt="" width={37} height={48} priority />
+            <span>ProContador</span>
+          </Link>
+          <nav aria-label="Principal">
+            <Link href="/">Minha situação</Link>
+            <Link href="/simulador">Comparar</Link>
+            <Link href="/caderno">Caderno</Link>
+            <Link href="/limite">Meu limite</Link>
+            <Link href="/das">Guia do MEI</Link>
+            <Link href="/cnpj-tecnico">CNPJ técnico</Link>
+            <Link href="/cadesp">Inscrição estadual</Link>
+          </nav>
         </header>
         <main>{children}</main>
         <footer className="rodape">

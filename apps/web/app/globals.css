@@ -1,16 +1,22 @@
 /*
-  Direção visual: a placa de preço do comércio popular.
-  Uma única peça forte (a placa amarela com a resposta) e o resto quieto, em preto no branco.
+  Direção visual: as cores do logo ProContador.
+  Uma única peça forte (a placa verde com moldura de bronze, que traz a resposta) e o resto quieto.
   Borda tracejada tem um só significado em todo o site: ponto ainda sem definição.
 */
 :root {
-  --amarelo: #ffd400;
-  --tinta: #000000;
+  /* Paleta do logo ProContador: verde do escudo e bronze da moldura. */
+  --marca-verde: #02322e;
+  --marca-verde-medio: #0b5a4a;
+  --marca-bronze: #a07b55;
+  --bronze-escuro: #7d5c38;
+  --bronze-claro: #f4ecdf;
+  --tinta: #13231f;
   --papel: #ffffff;
-  --caneta: #1438a6;
+  --caneta: #0b5a4a;
   --verde: #0a6b36;
   --carimbo: #b3261e;
-  --apoio: #4d4d4d;
+  --apoio: #4a5552;
+  --destaque: var(--bronze-claro);
 
   --texto: "Atkinson Hyperlegible", system-ui, sans-serif;
   --placa: "Archivo Variable", "Arial Narrow", sans-serif;
@@ -80,7 +86,7 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--caneta);
+  outline: 3px solid var(--bronze-escuro);
   outline-offset: 3px;
 }
 
@@ -89,7 +95,7 @@ a {
 .aviso-teste {
   margin: 0;
   padding: 0.5rem 1.25rem;
-  background: var(--tinta);
+  background: var(--marca-verde);
   color: var(--papel);
   font-size: 0.9375rem;
   text-align: center;
@@ -97,10 +103,37 @@ a {
 
 .topo {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem 1.25rem;
   padding-block: 1rem;
-  border-bottom: 3px solid var(--tinta);
+  border-bottom: 3px solid var(--marca-bronze);
+}
+
+.topo .marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--marca-verde);
+  text-decoration: none;
+}
+
+.topo .marca img {
+  display: block;
+}
+
+.topo nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.1rem;
+  font-size: 1rem;
+}
+
+.topo nav a {
+  padding-block: 0.4rem;
+  color: var(--tinta);
+  text-underline-offset: 0.25em;
 }
 
 .marca {
@@ -168,19 +201,20 @@ legend {
 }
 
 .opcao[data-marcado="true"] {
-  background: var(--amarelo);
-  box-shadow: inset 0 0 0 1px var(--tinta);
+  background: var(--destaque);
+  border-color: var(--marca-verde);
+  box-shadow: inset 0 0 0 2px var(--marca-verde);
 }
 
 .opcao input {
   width: 1.5rem;
   height: 1.5rem;
   margin: 0;
-  accent-color: var(--tinta);
+  accent-color: var(--marca-verde);
 }
 
 .opcao:has(input:focus-visible) {
-  outline: 3px solid var(--caneta);
+  outline: 3px solid var(--bronze-escuro);
   outline-offset: 3px;
 }
 
@@ -207,7 +241,7 @@ legend {
 }
 
 .campo-valor:focus-within {
-  outline: 3px solid var(--caneta);
+  outline: 3px solid var(--bronze-escuro);
   outline-offset: 3px;
 }
 
@@ -265,7 +299,7 @@ button {
   padding: 0.75rem 1.5rem;
   border: 0;
   border-radius: 4px;
-  background: var(--tinta);
+  background: var(--marca-verde);
   color: var(--papel);
   font-family: var(--placa);
   font-size: 1.25rem;
@@ -293,13 +327,16 @@ button {
 .placa {
   margin: 0.75rem 0.25rem 1.75rem;
   padding: 1.1rem 1.25rem 1.4rem;
-  background: var(--amarelo);
-  border: 3px solid var(--tinta);
+  background: var(--marca-verde);
+  color: var(--papel);
+  border: 3px solid var(--marca-bronze);
+  box-shadow: 0 0 0 3px var(--marca-verde);
   transform: rotate(-1.2deg);
 }
 
 .placa p {
   margin: 0 0 0.35rem;
+  color: var(--bronze-claro);
   font-size: 1rem;
 }
 
@@ -434,13 +471,396 @@ button {
 }
 
 .fontes li:target {
-  background: var(--amarelo);
-  outline: 6px solid var(--amarelo);
+  background: var(--destaque);
+  outline: 6px solid var(--destaque);
 }
 
 .fonte {
   color: var(--apoio);
   font-size: 0.9375rem;
+}
+
+/* Guias passo a passo */
+
+.botao {
+  display: inline-block;
+  padding: 0.8rem 1.25rem;
+  border-radius: 4px;
+  background: var(--marca-verde);
+  color: var(--papel);
+  font-family: var(--placa);
+  font-size: 1.125rem;
+  font-weight: 750;
+  font-stretch: 88%;
+  text-decoration: none;
+}
+
+.passos {
+  margin: 1.75rem 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+.passo {
+  position: relative;
+  counter-increment: passo;
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem 0.5rem 4rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.passo::before {
+  content: counter(passo);
+  color: var(--bronze-escuro);
+  position: absolute;
+  left: 1.1rem;
+  top: 0.85rem;
+  font-family: var(--placa);
+  font-size: 2.25rem;
+  font-weight: 850;
+  font-stretch: 75%;
+  line-height: 1;
+}
+
+.passo h2 {
+  margin-block: 0 0.5rem;
+}
+
+/* Tracejado quer dizer a mesma coisa do resto do site: ainda sem definição. */
+.passo.aguardando {
+  border-style: dashed;
+}
+
+.situacao {
+  margin-bottom: 0.2rem;
+  color: var(--apoio);
+  font-size: 0.9375rem;
+}
+
+.alerta li::before {
+  background: var(--carimbo);
+  transform: scale(0.7);
+}
+
+/* Medidor de limite */
+
+.campos {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.meses {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.mes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem 0.75rem;
+  padding-block: 0.4rem;
+  border-bottom: 1px solid var(--tinta);
+}
+
+.mes .nome-mes {
+  flex: 0 0 6.5rem;
+  padding-bottom: 0.6rem;
+}
+
+.valor-mes {
+  flex: 1 1 7rem;
+  font-size: 0.9375rem;
+}
+
+.valor-mes input {
+  display: block;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.35rem 0.75rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.invisivel {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.medidor {
+  height: 1.6rem;
+  border: 3px solid var(--tinta);
+  background: var(--papel);
+}
+
+.medidor-uso {
+  height: 100%;
+  background: var(--marca-verde-medio);
+}
+
+.medidor-legenda {
+  margin-top: 0.4rem;
+  font-weight: 700;
+}
+
+.linha-do-ano {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linha-do-ano li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding-block: 0.3rem;
+  font-size: 0.9375rem;
+}
+
+.trilho {
+  position: relative;
+  height: 0.9rem;
+  border: 1px solid var(--tinta);
+}
+
+.enchimento {
+  position: absolute;
+  inset: 0 auto 0 0;
+  max-width: 100%;
+  background: var(--marca-verde-medio);
+}
+
+li[data-estimado="true"] .enchimento {
+  background: repeating-linear-gradient(90deg, var(--marca-verde-medio) 0 4px, transparent 4px 7px);
+}
+
+li[data-estoura="true"] .enchimento {
+  background: var(--carimbo);
+}
+
+li[data-estoura="true"][data-estimado="true"] .enchimento {
+  background: repeating-linear-gradient(90deg, var(--carimbo) 0 4px, transparent 4px 7px);
+}
+
+.marca-limite {
+  position: absolute;
+  top: -0.35rem;
+  bottom: -0.35rem;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--tinta);
+}
+
+.acumulado {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Caderno de vendas */
+
+.aviso-local {
+  padding: 0.75rem 1rem;
+  background: var(--destaque);
+  border: 2px solid var(--marca-bronze);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.nova-venda {
+  margin-top: 1.5rem;
+  padding: 0.25rem 1.1rem 1.25rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.nova-venda fieldset {
+  margin-top: 1rem;
+}
+
+.campo-uf input {
+  width: 100%;
+  min-height: 3.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+  font-size: 1.125rem;
+}
+
+.confirmacao {
+  margin-block: 1rem 0;
+  padding-left: 0.75rem;
+  border-left: 4px solid var(--verde);
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.declaracao {
+  margin-top: 2rem;
+}
+
+.conta .total {
+  font-weight: 700;
+}
+
+.mes-vendas h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.25rem 0 0.25rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--tinta);
+  font-family: var(--placa);
+  font-stretch: 88%;
+  font-size: 1.125rem;
+}
+
+.mes-vendas ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mes-vendas li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 0.75rem;
+  padding-block: 0.5rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.venda-info small {
+  display: block;
+  color: var(--apoio);
+  font-size: 0.9375rem;
+}
+
+.venda-valor {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.mes-vendas li > .secundario,
+.venda-acoes {
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-height: 2.25rem;
+  padding: 0;
+  font-size: 0.9375rem;
+}
+
+.venda-acoes {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.venda-acoes .secundario {
+  min-height: 2.25rem;
+  padding: 0;
+}
+
+.perigo {
+  color: var(--carimbo);
+}
+
+/* Simulador */
+
+.caminho {
+  margin-top: 1.5rem;
+  padding: 0.25rem 1.1rem 1rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.caminho h2 {
+  margin-top: 1rem;
+}
+
+.caminho[data-cabe="false"] {
+  border-width: 2px;
+  color: var(--apoio);
+}
+
+.caminho[data-cabe="opcional"] {
+  border-style: dashed;
+  border-width: 2px;
+}
+
+.veredito {
+  margin-top: 0.35rem;
+  font-weight: 700;
+}
+
+.caminho[data-cabe="true"] .veredito {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--marca-verde);
+  color: var(--papel);
+}
+
+/* Radar do CNPJ técnico */
+
+.radar {
+  margin-top: 2.25rem;
+  padding: 0.25rem 1.1rem 1.25rem;
+  border: 3px solid var(--tinta);
+  border-radius: 4px;
+}
+
+.radar h2 {
+  margin-top: 1rem;
+}
+
+.lado-a-lado {
+  grid-template-columns: 1fr 1fr;
+}
+
+.campo-contato {
+  display: block;
+  margin-top: 1rem;
+}
+
+.campo-contato input {
+  display: block;
+  width: 100%;
+  min-height: 3.5rem;
+  margin-top: 0.35rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+  font-size: 1.25rem;
+}
+
+.aceite {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.45;
+  cursor: pointer;
+}
+
+.aceite input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.1rem 0 0;
+  accent-color: var(--marca-verde);
 }
 
 @media (prefers-reduced-motion: no-preference) {
