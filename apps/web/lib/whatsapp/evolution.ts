@@ -9,6 +9,9 @@ export interface ConfiguracaoEvolution {
   segredo: string;
   /** Números que podem conversar. Vazio libera todos. */
   permitidos: Set<string>;
+  /** Números que dividem a linha com outros robôs: só entram na conversa com a palavra. */
+  comPalavra: Set<string>;
+  palavra: string;
 }
 
 export function configuracaoEvolution(env: NodeJS.ProcessEnv = process.env): ConfiguracaoEvolution | null {
@@ -17,13 +20,23 @@ export function configuracaoEvolution(env: NodeJS.ProcessEnv = process.env): Con
   const chave = env.EVOLUTION_API_KEY?.trim();
   const segredo = env.WHATSAPP_WEBHOOK_SEGREDO?.trim();
   if (!url || !instancia || !chave || !segredo || segredo.length < 16) return null;
-  const permitidos = new Set(
-    (env.WHATSAPP_PERMITIDOS ?? "")
-      .split(",")
-      .map((n) => n.replace(/\D/g, ""))
-      .filter(Boolean),
-  );
-  return { url, instancia, chave, segredo, permitidos };
+  const numeros = (lista: string | undefined) =>
+    new Set(
+      (lista ?? "")
+        .split(",")
+        .map((n) => n.replace(/\D/g, ""))
+        .filter(Boolean),
+    );
+  const palavra = (env.WHATSAPP_PALAVRA_ENTRADA ?? "procontador").trim().toLowerCase();
+  return {
+    url,
+    instancia,
+    chave,
+    segredo,
+    permitidos: numeros(env.WHATSAPP_PERMITIDOS),
+    comPalavra: numeros(env.WHATSAPP_NUMEROS_COM_PALAVRA),
+    palavra,
+  };
 }
 
 const Chave = z.object({

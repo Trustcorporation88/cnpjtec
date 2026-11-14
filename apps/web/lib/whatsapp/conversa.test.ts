@@ -67,3 +67,13 @@ describe("conversa do WhatsApp", () => {
     for (const f of falas) expect(conversar(f).ultima).not.toMatch(/[—–]/);
   });
 });
+
+describe("entrada e saída", () => {
+  it("procontador abre o menu e sair encerra", () => {
+    const entrou = responder(undefined, "ProContador");
+    expect(entrou.estado?.etapa).toBe("menu");
+    const saiu = responder(entrou.estado, "sair");
+    expect(saiu.estado).toBeUndefined();
+    expect(saiu.mensagens[0]).toContain("procontador");
+  });
+});

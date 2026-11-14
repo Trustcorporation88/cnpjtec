@@ -74,7 +74,7 @@ function menu(): string {
     "2. Pagar a guia do MEI (DAS)",
     "3. Entender o CNPJ técnico",
     "",
-    "Mande 0 a qualquer momento para voltar a este menu.",
+    "Mande 0 a qualquer momento para voltar a este menu, ou sair para encerrar.",
   ].join("\n");
 }
 
@@ -176,11 +176,18 @@ function concluir(estado: Estado, inscricaoEstadual?: SimNao): Resposta {
   return { estado: { etapa: "menu", atividades: [] }, mensagens: [textoDoResultado(respostas)] };
 }
 
-const VOLTAR = new Set(["0", "menu", "inicio", "voltar", "sair", "oi", "ola", "bom dia", "boa tarde", "boa noite"]);
+const VOLTAR = new Set(["0", "menu", "inicio", "voltar", "procontador", "oi", "ola", "bom dia", "boa tarde", "boa noite"]);
 
 /** Recebe o texto de uma mensagem e o estado guardado; devolve o que responder e o novo estado. */
 export function responder(anterior: Estado | undefined, recebido: string): Resposta {
   const texto = limpar(recebido);
+
+  if (texto === "sair" || texto === "encerrar") {
+    return {
+      estado: undefined,
+      mensagens: ["Pronto, você saiu do ProContador. Para voltar, mande *procontador*."],
+    };
+  }
 
   if (!anterior || VOLTAR.has(texto)) {
     return { estado: { etapa: "menu", atividades: [] }, mensagens: [menu()] };
