@@ -42,6 +42,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Link href="/cadesp">Inscrição estadual</Link>
             <Link href="/cofre">Cofre de notas</Link>
             <Link href="/abrir-mei">Abrir MEI</Link>
+            <Link href="/assistente">Perguntar</Link>
             <Link href="/ajuda">Contador</Link>
             <Link href="/conta">Minha conta</Link>
           </nav>

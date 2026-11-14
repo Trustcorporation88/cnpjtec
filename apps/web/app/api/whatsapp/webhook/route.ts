@@ -1,5 +1,6 @@
 import { criarLimite } from "@/lib/radar";
-import { limpar, responder, type Estado } from "@/lib/whatsapp/conversa";
+import { conversar, iaAtiva, type Mensagem } from "@/lib/ia/assistente";
+import { ehPerguntaLivre, limpar, responder, type Estado } from "@/lib/whatsapp/conversa";
 import { configuracaoEvolution, enviarTexto, lerEvento, segredoConfere } from "@/lib/whatsapp/evolution";
 import { criarMemoria } from "@/lib/whatsapp/memoria";
 
@@ -8,6 +9,8 @@ export const dynamic = "force-dynamic";
 const conversas = criarMemoria<Estado>(30 * 60 * 1000);
 const jaVistas = criarMemoria<true>(10 * 60 * 1000, 20000);
 const dentroDoLimite = criarLimite(20, 60 * 1000);
+const historicos = criarMemoria<Mensagem[]>(30 * 60 * 1000);
+const perguntasPorHora = criarLimite(30, 60 * 60 * 1000);
 
 /** Recebe os eventos da Evolution e responde a conversa guiada. Sempre devolve 200 para a Evolution não repetir. */
 export async function POST(request: Request): Promise<Response> {
@@ -41,7 +44,27 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ ok: true, tratou: false });
   }
 
+  if (iaAtiva() && ehPerguntaLivre(anterior, mensagem.texto) && perguntasPorHora(mensagem.destino)) {
+    const historico = [...(historicos.ler(mensagem.destino) ?? []), { role: "user" as const, content: mensagem.texto }];
+    let resposta: string;
+    try {
+      resposta = await conversar(historico, { canal: "whatsapp" });
+    } catch (erro) {
+      console.error("whatsapp: assistente falhou", erro instanceof Error ? erro.message : erro);
+      resposta = "Não consegui responder agora. Responda com o número de uma opção do menu ou tente de novo daqui a pouco.";
+    }
+    historicos.gravar(mensagem.destino, [...historico, { role: "assistant" as const, content: resposta }].slice(-16));
+    conversas.gravar(mensagem.destino, anterior);
+    try {
+      await enviarTexto(config, mensagem.destino, `${resposta}\n\nMande 0 para ver o menu.`);
+    } catch (erro) {
+      console.error("whatsapp: falha ao enviar", erro instanceof Error ? erro.message : erro);
+    }
+    return Response.json({ ok: true, tratou: true });
+  }
+
   const { estado, mensagens } = responder(anterior, mensagem.texto);
+  if (!estado) historicos.gravar(mensagem.destino, undefined);
   conversas.gravar(mensagem.destino, estado);
 
   try {

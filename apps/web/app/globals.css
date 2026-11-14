@@ -970,3 +970,38 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Conversa com a assistente */
+
+.mensagens {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.balao {
+  max-width: 92%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+
+.balao p {
+  margin: 0.2rem 0;
+}
+
+.balao.seu {
+  justify-self: end;
+  background: var(--marca-verde);
+  color: var(--papel);
+}
+
+.balao.seu a {
+  color: var(--papel);
+}
+
+.balao.nosso {
+  justify-self: start;
+  border: 2px solid var(--marca-verde);
+  background: var(--bronze-claro);
+}

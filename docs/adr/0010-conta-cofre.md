@@ -14,3 +14,9 @@
 ## Pendências
 - Razão social do controlador e e-mail de privacidade para o texto de consentimento completo.
 - Foto e PDF de nota no cofre (hoje só XML e chave).
+
+## Assistente com IA (atualização)
+- `/assistente` no site e pergunta livre no menu do WhatsApp. Liga sozinha quando `ANTHROPIC_API_KEY` existir no Railway.
+- A IA só conversa: diagnóstico e simulação vêm das ferramentas `diagnosticar` e `simular`, que chamam o mesmo motor do site. Regras citadas vêm de `buscar_regra`.
+- Minimização: o telefone nunca vai para a API; CPF, CNPJ, cartão e e-mail digitados são trocados por marcadores antes do envio.
+- Modelo da conversa por `MODELO_CONVERSA` (padrão `claude-sonnet-5-5`).

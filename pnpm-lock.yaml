@@ -17,6 +17,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@cnpjtec/agente':
+        specifier: workspace:*
+        version: link:../../packages/agente
       '@cnpjtec/conteudo':
         specifier: workspace:*
         version: link:../../packages/conteudo
