@@ -40,6 +40,10 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Link href="/das">Guia do MEI</Link>
             <Link href="/cnpj-tecnico">CNPJ técnico</Link>
             <Link href="/cadesp">Inscrição estadual</Link>
+            <Link href="/cofre">Cofre de notas</Link>
+            <Link href="/abrir-mei">Abrir MEI</Link>
+            <Link href="/ajuda">Contador</Link>
+            <Link href="/conta">Minha conta</Link>
           </nav>
         </header>
         <main>{children}</main>
@@ -48,7 +52,10 @@ export default function Layout({ children }: { children: ReactNode }) {
             O resultado é uma orientação geral, feita só com as respostas que você deu. Ele não
             substitui a análise de um contador.
           </p>
-          <p>Não pedimos senha do gov.br e não guardamos as suas respostas.</p>
+          <p>
+            Não pedimos senha do gov.br. Sem conta, não guardamos as suas respostas. Com conta, você baixa ou apaga
+            tudo quando quiser.
+          </p>
         </footer>
       </body>
     </html>

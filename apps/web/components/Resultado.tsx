@@ -163,6 +163,22 @@ export function Resultado({
         </p>
       )}
 
+      {d.trilhas.includes("D_MEI_REVENDA") && (
+        <p>
+          <Link className="botao" href="/cofre">
+            Guardar as notas de compra no cofre
+          </Link>
+        </p>
+      )}
+
+      {(d.trilhas.includes("A_NANO") || d.trilhas.includes("B_PF_CONTRIBUINTE")) && (
+        <p>
+          <Link className="botao" href="/abrir-mei">
+            Ver como abrir um MEI, se valer a pena
+          </Link>
+        </p>
+      )}
+
       {radar && d.trilhas.includes("B_PF_CONTRIBUINTE") && (
         <Radar dados={radar} trilha="B_PF_CONTRIBUINTE" uf={uf} />
       )}
@@ -173,6 +189,12 @@ export function Resultado({
           <Lista frases={d.comContador} classe="lista" />
         </section>
       )}
+
+      <p>
+        Ficou alguma dúvida?{" "}
+        <Link href={`/ajuda?trilhas=${d.trilhas.join(",")}`}>Pergunte a um contador</Link>. A gente responde pelo
+        WhatsApp.
+      </p>
 
       <details className="fontes">
         <summary>De onde tiramos isso</summary>
