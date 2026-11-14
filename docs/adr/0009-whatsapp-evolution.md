@@ -16,3 +16,8 @@ O ProContador atende no WhatsApp pela Evolution API (instância própria). A con
 - Guardar o estado no Supabase quando houver mais de uma instância do servidor.
 - Abrir para todos os números depois do teste.
 - Ligar a conversa livre com a API da Anthropic, sempre com o motor de regras decidindo.
+
+## Linha compartilhada com o n8n (atualização)
+A instância Trustcorp manda as mensagens para o n8n (workflow de comandos e Hawk). O n8n repassa ao ProContador as mensagens que não são comandos, e o ProContador responde `{ "tratou": true | false }`.
+- Números em `WHATSAPP_NUMEROS_COM_PALAVRA` só entram na conversa com a palavra de `WHATSAPP_PALAVRA_ENTRADA` (padrão `procontador`) e saem com `sair`.
+- Quando `tratou` é falso, ou o ProContador não responde, o n8n segue para o Hawk como antes.

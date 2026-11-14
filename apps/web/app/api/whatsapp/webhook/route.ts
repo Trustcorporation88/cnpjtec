@@ -1,5 +1,5 @@
 import { criarLimite } from "@/lib/radar";
-import { responder, type Estado } from "@/lib/whatsapp/conversa";
+import { limpar, responder, type Estado } from "@/lib/whatsapp/conversa";
 import { configuracaoEvolution, enviarTexto, lerEvento, segredoConfere } from "@/lib/whatsapp/evolution";
 import { criarMemoria } from "@/lib/whatsapp/memoria";
 
@@ -21,21 +21,27 @@ export async function POST(request: Request): Promise<Response> {
   try {
     corpo = await request.json();
   } catch {
-    return Response.json({ ok: true, ignorado: "corpo" });
+    return Response.json({ ok: true, tratou: false, ignorado: "corpo" });
   }
 
   const mensagem = lerEvento(corpo);
-  if (!mensagem) return Response.json({ ok: true, ignorado: "evento" });
-  if (jaVistas.ler(mensagem.id)) return Response.json({ ok: true, ignorado: "repetida" });
+  if (!mensagem) return Response.json({ ok: true, tratou: false, ignorado: "evento" });
+  if (jaVistas.ler(mensagem.id)) return Response.json({ ok: true, tratou: false, ignorado: "repetida" });
   jaVistas.gravar(mensagem.id, true);
 
   if (config.permitidos.size > 0 && !(mensagem.numero && config.permitidos.has(mensagem.numero))) {
     console.info("whatsapp: remetente fora da lista de teste", { jid: mensagem.destino.slice(-6) });
-    return Response.json({ ok: true, ignorado: "remetente" });
+    return Response.json({ ok: true, tratou: false, ignorado: "remetente" });
   }
-  if (!dentroDoLimite(mensagem.destino)) return Response.json({ ok: true, ignorado: "limite" });
+  if (!dentroDoLimite(mensagem.destino)) return Response.json({ ok: true, tratou: false, ignorado: "limite" });
 
-  const { estado, mensagens } = responder(conversas.ler(mensagem.destino), mensagem.texto);
+  const anterior = conversas.ler(mensagem.destino);
+  // Em números que também falam com outros robôs, só entramos com a palavra de entrada.
+  if (!anterior && mensagem.numero && config.comPalavra.has(mensagem.numero) && limpar(mensagem.texto) !== config.palavra) {
+    return Response.json({ ok: true, tratou: false });
+  }
+
+  const { estado, mensagens } = responder(anterior, mensagem.texto);
   conversas.gravar(mensagem.destino, estado);
 
   try {
@@ -43,5 +49,5 @@ export async function POST(request: Request): Promise<Response> {
   } catch (erro) {
     console.error("whatsapp: falha ao enviar", erro instanceof Error ? erro.message : erro);
   }
-  return Response.json({ ok: true });
+  return Response.json({ ok: true, tratou: true });
 }

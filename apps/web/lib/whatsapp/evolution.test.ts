@@ -47,6 +47,8 @@ describe("configuração e envio", () => {
     const c = configuracaoEvolution(env);
     expect(c?.url).toBe("https://evo.exemplo");
     expect([...(c?.permitidos ?? [])]).toEqual(["5514998370223"]);
+    expect(c?.palavra).toBe("procontador");
+    expect(c?.comPalavra.size).toBe(0);
   });
 
   it("envia com a chave no cabeçalho", async () => {
