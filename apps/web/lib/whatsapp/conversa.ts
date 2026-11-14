@@ -65,7 +65,7 @@ function site(): string {
   return (process.env.SITE_URL ?? "https://web-production-5fc35120.up.railway.app").replace(/\/$/, "");
 }
 
-function menu(): string {
+function menu(comIa = process.env.ANTHROPIC_API_KEY ? true : false): string {
   return [
     "Olá! Aqui é o ProContador. Eu explico, em palavras simples, o que você precisa fazer com o governo para trabalhar por conta própria.",
     "",
@@ -73,6 +73,7 @@ function menu(): string {
     "1. Fazer o Raio-X (leva 2 minutos)",
     "2. Pagar a guia do MEI (DAS)",
     "3. Entender o CNPJ técnico",
+    ...(comIa ? ["", "Ou escreva a sua dúvida do seu jeito."] : []),
     "",
     "Mande 0 a qualquer momento para voltar a este menu, ou sair para encerrar.",
   ].join("\n");
@@ -177,6 +178,15 @@ function concluir(estado: Estado, inscricaoEstadual?: SimNao): Resposta {
 }
 
 const VOLTAR = new Set(["0", "menu", "inicio", "voltar", "procontador", "oi", "ola", "bom dia", "boa tarde", "boa noite"]);
+
+/** Verdadeiro quando, no menu, o texto não é uma opção nem um comando: vira pergunta livre. */
+export function ehPerguntaLivre(estado: Estado | undefined, recebido: string): boolean {
+  if (!estado || estado.etapa !== "menu") return false;
+  const texto = limpar(recebido);
+  if (VOLTAR.has(texto) || texto === "sair" || texto === "encerrar") return false;
+  if (/^\d{1,2}$/.test(texto)) return false;
+  return texto.length >= 4;
+}
 
 /** Recebe o texto de uma mensagem e o estado guardado; devolve o que responder e o novo estado. */
 export function responder(anterior: Estado | undefined, recebido: string): Resposta {

@@ -77,3 +77,15 @@ describe("entrada e saída", () => {
     expect(saiu.mensagens[0]).toContain("procontador");
   });
 });
+
+describe("pergunta livre", () => {
+  it("só no menu, e não para números ou comandos", async () => {
+    const { ehPerguntaLivre } = await import("./conversa");
+    const menu = { etapa: "menu" as const, atividades: [] };
+    expect(ehPerguntaLivre(menu, "sou manicure, preciso de CNPJ?")).toBe(true);
+    expect(ehPerguntaLivre(menu, "2")).toBe(false);
+    expect(ehPerguntaLivre(menu, "sair")).toBe(false);
+    expect(ehPerguntaLivre({ etapa: "valor", atividades: [] }, "uns dois mil")).toBe(false);
+    expect(ehPerguntaLivre(undefined, "oi tudo bem")).toBe(false);
+  });
+});

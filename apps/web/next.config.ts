@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  transpilePackages: ["@cnpjtec/conteudo", "@cnpjtec/motor-regras", "@cnpjtec/regras"],
+  transpilePackages: ["@cnpjtec/agente", "@cnpjtec/conteudo", "@cnpjtec/motor-regras", "@cnpjtec/regras"],
   poweredByHeader: false,
   async headers() {
     return [

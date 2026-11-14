@@ -868,3 +868,140 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
     scroll-behavior: smooth;
   }
 }
+
+/* Conta, cofre e ajuda */
+
+.carregando {
+  margin-top: 2rem;
+  color: var(--apoio);
+}
+
+.lista-links {
+  padding-left: 1.25rem;
+  line-height: 1.5;
+}
+
+.lista-links li + li {
+  margin-top: 0.6rem;
+}
+
+.confirmar {
+  margin-top: 1rem;
+  padding: 0.25rem 1rem 1rem;
+  border: 3px solid var(--carimbo);
+  border-radius: 4px;
+}
+
+.campo-contato textarea {
+  display: block;
+  width: 100%;
+  min-height: 8rem;
+  margin-top: 0.35rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--tinta);
+  border-radius: 4px;
+  background: var(--papel);
+  color: inherit;
+  font: inherit;
+  font-size: 1.125rem;
+  line-height: 1.45;
+}
+
+.tabela {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabela th,
+.tabela td {
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid var(--linha, #cfc6b4);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabela td.valor,
+.tabela th.valor {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.nota {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--linha, #cfc6b4);
+}
+
+.nota h3 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.nota p {
+  margin: 0.25rem 0 0;
+}
+
+.selo-st {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0 0.4rem;
+  border: 2px solid var(--bronze-escuro);
+  border-radius: 3px;
+  color: var(--bronze-escuro);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+@media print {
+  .topo,
+  .rodape,
+  .aviso-teste,
+  .nao-imprimir {
+    display: none !important;
+  }
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Conversa com a assistente */
+
+.mensagens {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.balao {
+  max-width: 92%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+
+.balao p {
+  margin: 0.2rem 0;
+}
+
+.balao.seu {
+  justify-self: end;
+  background: var(--marca-verde);
+  color: var(--papel);
+}
+
+.balao.seu a {
+  color: var(--papel);
+}
+
+.balao.nosso {
+  justify-self: start;
+  border: 2px solid var(--marca-verde);
+  background: var(--bronze-claro);
+}

@@ -54,16 +54,49 @@ export function Caderno() {
   const [ano, setAno] = useState(() => new Date().getFullYear());
   const [apagando, setApagando] = useState<string | null>(null);
   const arquivo = useRef<HTMLInputElement>(null);
+  /** "fora": sem conta; "ok": guardado na nuvem; "falhou": a nuvem não respondeu. */
+  const [nuvem, setNuvem] = useState<"verificando" | "fora" | "ok" | "falhou">("verificando");
 
   useEffect(() => {
-    setCaderno(carregarDoAparelho());
+    const local = carregarDoAparelho();
+    setCaderno(local);
     setData(hoje());
     setCarregado(true);
+    (async () => {
+      try {
+        const r = await fetch("/api/caderno", { cache: "no-store" });
+        if (r.status === 401 || r.status === 503) return setNuvem("fora");
+        if (!r.ok) return setNuvem("falhou");
+        const remoto = lerCaderno(await r.text()).caderno;
+        const junto = juntarCadernos(remoto, local);
+        setCaderno(junto);
+        guardarNoAparelho(junto);
+        if (junto.vendas.length !== remoto.vendas.length) await enviarParaNuvem(junto);
+        else setNuvem("ok");
+      } catch {
+        setNuvem("falhou");
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function enviarParaNuvem(novo: TipoCaderno) {
+    try {
+      const r = await fetch("/api/caderno", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novo),
+      });
+      setNuvem(r.ok ? "ok" : r.status === 401 ? "fora" : "falhou");
+    } catch {
+      setNuvem("falhou");
+    }
+  }
 
   function mudar(novo: TipoCaderno) {
     setCaderno(novo);
     setGuardou(guardarNoAparelho(novo));
+    if (nuvem === "ok" || nuvem === "falhou") void enviarParaNuvem(novo);
   }
 
   function anotar(evento: FormEvent) {
@@ -146,10 +179,22 @@ export function Caderno() {
         Anote cada venda ou serviço. No fim do ano, o caderno já mostra os números que a declaração
         anual do MEI pede.
       </p>
-      <p className="aviso-local">
-        As vendas ficam guardadas só neste celular ou computador. Ninguém mais vê, nem o ProContador. Salve
-        uma cópia de vez em quando, para não perder se trocar de aparelho.
-      </p>
+      {nuvem === "ok" ? (
+        <p className="aviso-local">
+          As vendas estão guardadas na sua conta. Você vê o mesmo caderno em qualquer aparelho em que entrar.
+        </p>
+      ) : nuvem === "falhou" ? (
+        <p className="erro" role="alert">
+          Não conseguimos guardar na sua conta agora. As vendas continuam neste aparelho e vamos tentar de novo
+          na próxima anotação.
+        </p>
+      ) : (
+        <p className="aviso-local">
+          Sem conta, as vendas ficam só neste celular ou computador. Ninguém mais vê, nem o ProContador.{" "}
+          <a href="/entrar?voltar=/caderno">Entre com o seu celular</a> para guardar na nuvem e não perder se
+          trocar de aparelho.
+        </p>
+      )}
       {carregado && !guardou && (
         <p className="erro" role="alert">
           Este navegador não está deixando guardar as vendas. Se fechar a página, elas se perdem. Salve
