@@ -1,3 +1,4 @@
+import { cnpjValido, configuracaoDas } from "../das/procontador";
 import { lerValor, mostrarValor } from "../dinheiro";
 import { diagnosticar, TIPOS_DE_ATIVIDADE, type Respostas } from "../respostas";
 
@@ -9,7 +10,7 @@ import { diagnosticar, TIPOS_DE_ATIVIDADE, type Respostas } from "../respostas";
 type Tipo = (typeof TIPOS_DE_ATIVIDADE)[number];
 type SimNao = "sim" | "nao" | "nao_sei";
 
-export type Etapa = "menu" | "vinculo" | "temMei" | "atividade" | "valor" | "outra" | "uf" | "ie";
+export type Etapa = "menu" | "das_cnpj" | "vinculo" | "temMei" | "atividade" | "valor" | "outra" | "uf" | "ie";
 
 export interface Estado {
   etapa: Etapa;
@@ -24,6 +25,8 @@ export interface Resposta {
   /** Estado a guardar para a próxima mensagem. Indefinido encerra a conversa. */
   estado: Estado | undefined;
   mensagens: string[];
+  /** Trabalho a fazer depois de responder, fora da conversa (consulta demorada). */
+  acao?: { tipo: "consultar_das"; cnpj: string };
 }
 
 const PGMEI =
@@ -210,6 +213,18 @@ export function responder(anterior: Estado | undefined, recebido: string): Respo
       if (texto === "1") {
         return { estado: { etapa: "vinculo", atividades: [] }, mensagens: [PERGUNTA_VINCULO] };
       }
+      if (texto === "2" && configuracaoDas()) {
+        return {
+          estado: { etapa: "das_cnpj", atividades: [] },
+          mensagens: [
+            [
+              "Mande o CNPJ do seu MEI (14 números). Eu consulto no PGMEI, o programa oficial da Receita, o que está pago e o que está em aberto neste ano.",
+              "",
+              "Não precisa de senha. Nunca passe a sua senha gov.br para ninguém.",
+            ].join("\n"),
+          ],
+        };
+      }
       if (texto === "2") {
         return {
           estado,
@@ -244,6 +259,21 @@ export function responder(anterior: Estado | undefined, recebido: string): Respo
         };
       }
       return { estado, mensagens: [NAO_ENTENDI, menu()] };
+    }
+
+    case "das_cnpj": {
+      const cnpj = cnpjValido(recebido);
+      if (!cnpj) {
+        return {
+          estado,
+          mensagens: ["Esse CNPJ não confere. Mande os 14 números, do jeito que estão no certificado do MEI. Ou mande 0 para voltar."],
+        };
+      }
+      return {
+        estado: { etapa: "menu", atividades: [] },
+        mensagens: ["Certo. Estou consultando o PGMEI agora. Leva de 1 a 5 minutos, e eu te mando o resultado aqui."],
+        acao: { tipo: "consultar_das", cnpj },
+      };
     }
 
     case "vinculo": {

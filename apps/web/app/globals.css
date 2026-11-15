@@ -1005,3 +1005,10 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
   border: 2px solid var(--marca-verde);
   background: var(--bronze-claro);
 }
+
+.caixa-das {
+  margin-top: 2rem;
+  padding: 0.25rem 1.25rem 1.25rem;
+  border: 3px solid var(--marca-verde);
+  border-radius: 6px;
+}

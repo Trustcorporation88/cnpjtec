@@ -1,7 +1,22 @@
 import { criarLimite } from "@/lib/radar";
+import {
+  anoEmSaoPaulo,
+  configuracaoDas,
+  consultarExtrato,
+  ErroDas,
+  PGMEI,
+  pedirExtrato,
+  resumoParaWhatsapp,
+} from "@/lib/das/procontador";
 import { conversar, iaAtiva, type Mensagem } from "@/lib/ia/assistente";
 import { ehPerguntaLivre, limpar, responder, type Estado } from "@/lib/whatsapp/conversa";
-import { configuracaoEvolution, enviarTexto, lerEvento, segredoConfere } from "@/lib/whatsapp/evolution";
+import {
+  configuracaoEvolution,
+  enviarTexto,
+  lerEvento,
+  segredoConfere,
+  type ConfiguracaoEvolution,
+} from "@/lib/whatsapp/evolution";
 import { criarMemoria } from "@/lib/whatsapp/memoria";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +26,43 @@ const jaVistas = criarMemoria<true>(10 * 60 * 1000, 20000);
 const dentroDoLimite = criarLimite(20, 60 * 1000);
 const historicos = criarMemoria<Mensagem[]>(30 * 60 * 1000);
 const perguntasPorHora = criarLimite(30, 60 * 60 * 1000);
+/** Cada consulta concluída do DAS custa: no máximo 3 por número por dia. */
+const consultasDasPorDia = criarLimite(3, 24 * 60 * 60 * 1000);
+
+const esperar = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/** Pede o extrato ao ProContador e, quando o robô terminar, manda o resumo na conversa. */
+async function consultarDasEmSegundoPlano(config: ConfiguracaoEvolution, destino: string, cnpj: string): Promise<void> {
+  const das = configuracaoDas();
+  if (!das) return;
+  const ano = anoEmSaoPaulo();
+  const avisar = (texto: string) =>
+    enviarTexto(config, destino, texto).catch((e) => console.error("whatsapp: falha ao enviar", e instanceof Error ? e.message : e));
+  if (!consultasDasPorDia(destino)) {
+    await avisar(`Você já fez 3 consultas hoje. Amanhã consulto de novo. Enquanto isso, veja direto no PGMEI:\n${PGMEI}`);
+    return;
+  }
+  try {
+    const { pedido } = await pedirExtrato(das, cnpj, ano);
+    for (let i = 0; i < 40; i++) {
+      const c = await consultarExtrato(das, pedido);
+      if (c.pronto) {
+        await avisar(`${resumoParaWhatsapp(cnpj, ano, c, PGMEI)}\n\nMande 0 para ver o menu.`);
+        return;
+      }
+      await esperar(15_000);
+    }
+    await avisar(`O PGMEI está demorando para responder. Tente de novo mais tarde, ou veja direto:\n${PGMEI}`);
+  } catch (erro) {
+    console.error("whatsapp: consulta do DAS falhou", erro instanceof Error ? erro.message : erro);
+    const limite = erro instanceof ErroDas && erro.status === 429;
+    await avisar(
+      limite
+        ? `Hoje já fizemos muitas consultas. Tente amanhã, ou veja direto no PGMEI:\n${PGMEI}`
+        : `Não consegui consultar o PGMEI agora. Você pode ver direto no site da Receita, só com o CNPJ:\n${PGMEI}`,
+    );
+  }
+}
 
 /** Recebe os eventos da Evolution e responde a conversa guiada. Sempre devolve 200 para a Evolution não repetir. */
 export async function POST(request: Request): Promise<Response> {
@@ -63,7 +115,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ ok: true, tratou: true });
   }
 
-  const { estado, mensagens } = responder(anterior, mensagem.texto);
+  const { estado, mensagens, acao } = responder(anterior, mensagem.texto);
   if (!estado) historicos.gravar(mensagem.destino, undefined);
   conversas.gravar(mensagem.destino, estado);
 
@@ -71,6 +123,10 @@ export async function POST(request: Request): Promise<Response> {
     for (const texto of mensagens) await enviarTexto(config, mensagem.destino, texto);
   } catch (erro) {
     console.error("whatsapp: falha ao enviar", erro instanceof Error ? erro.message : erro);
+  }
+  if (acao?.tipo === "consultar_das") {
+    // Não esperamos: o robô leva minutos e o webhook precisa responder logo.
+    void consultarDasEmSegundoPlano(config, mensagem.destino, acao.cnpj);
   }
   return Response.json({ ok: true, tratou: true });
 }

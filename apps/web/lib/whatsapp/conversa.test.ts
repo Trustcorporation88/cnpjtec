@@ -89,3 +89,22 @@ describe("pergunta livre", () => {
     expect(ehPerguntaLivre(undefined, "oi tudo bem")).toBe(false);
   });
 });
+
+describe("DAS pelo WhatsApp", () => {
+  it("com o serviço ligado, pede o CNPJ e devolve a ação de consultar", () => {
+    process.env.PROCONTADOR_API_URL = "https://api.exemplo/api/v1";
+    process.env.PROCONTADOR_SERVICO_TOKEN = "t".repeat(40);
+    const pedido = responder({ etapa: "menu", atividades: [] }, "2");
+    expect(pedido.estado?.etapa).toBe("das_cnpj");
+    const errado = responder(pedido.estado, "123");
+    expect(errado.estado?.etapa).toBe("das_cnpj");
+    const certo = responder(pedido.estado, "11.222.333/0001-81");
+    expect(certo.acao).toEqual({ tipo: "consultar_das", cnpj: "11222333000181" });
+    delete process.env.PROCONTADOR_API_URL;
+    delete process.env.PROCONTADOR_SERVICO_TOKEN;
+  });
+  it("sem o serviço, explica o PGMEI como antes", () => {
+    const r = responder({ etapa: "menu", atividades: [] }, "2");
+    expect(r.mensagens[0]).toContain("pgmei.app");
+  });
+});

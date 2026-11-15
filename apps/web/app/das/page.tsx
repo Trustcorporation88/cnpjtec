@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { baseDeRegras, buscarRegra } from "@cnpjtec/regras";
+import { DasExtrato } from "@/components/DasExtrato";
 import { Fontes } from "@/components/Fontes";
+import { configuracaoDas } from "@/lib/das/procontador";
 import { citar } from "@/lib/regras-tela";
 
 export const metadata: Metadata = {
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
 const PGMEI =
   "https://www8.receita.fazenda.gov.br/SimplesNacional/Aplicacoes/ATSPO/pgmei.app/Identificacao";
 
+export const dynamic = "force-dynamic";
+
 export default function PaginaDoDas() {
+  const consultaLigada = configuracaoDas() !== null;
   return (
     <article className="guia">
       <div className="placa">
@@ -50,6 +55,8 @@ export default function PaginaDoDas() {
       </ol>
 
       <p>Também dá para gerar a guia pelo aplicativo oficial App MEI, no celular.</p>
+
+      {consultaLigada && <DasExtrato pgmei={PGMEI} />}
 
       <section aria-labelledby="t-prazo">
         <h2 id="t-prazo">Prazo</h2>
