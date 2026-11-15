@@ -74,7 +74,7 @@ function menu(comIa = process.env.ANTHROPIC_API_KEY ? true : false): string {
     "",
     "Responda só com o número:",
     "1. Fazer o Raio-X (leva 2 minutos)",
-    "2. Pagar a guia do MEI (DAS)",
+    "2. Boleto do DAS (guia mensal do MEI)",
     "3. Entender o CNPJ técnico",
     ...(comIa ? ["", "Ou escreva a sua dúvida do seu jeito."] : []),
     "",
@@ -182,12 +182,18 @@ function concluir(estado: Estado, inscricaoEstadual?: SimNao): Resposta {
 
 const VOLTAR = new Set(["0", "menu", "inicio", "voltar", "procontador", "oi", "ola", "bom dia", "boa tarde", "boa noite"]);
 
+/** Pedido do boleto escrito com palavras, no lugar do número 2. */
+export function pedeBoletoDoDas(recebido: string): boolean {
+  return /\b(das|boleto|guia)\b/.test(limpar(recebido));
+}
+
 /** Verdadeiro quando, no menu, o texto não é uma opção nem um comando: vira pergunta livre. */
 export function ehPerguntaLivre(estado: Estado | undefined, recebido: string): boolean {
   if (!estado || estado.etapa !== "menu") return false;
   const texto = limpar(recebido);
   if (VOLTAR.has(texto) || texto === "sair" || texto === "encerrar") return false;
   if (/^\d{1,2}$/.test(texto)) return false;
+  if (pedeBoletoDoDas(recebido)) return false;
   return texto.length >= 4;
 }
 
@@ -207,6 +213,7 @@ export function responder(anterior: Estado | undefined, recebido: string): Respo
   }
 
   const estado: Estado = { ...anterior, atividades: [...anterior.atividades] };
+  if (estado.etapa === "menu" && pedeBoletoDoDas(recebido)) return responder(estado, "2");
 
   switch (estado.etapa) {
     case "menu": {
