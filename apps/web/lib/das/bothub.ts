@@ -57,7 +57,7 @@ async function chamar(config: ConfiguracaoBothub, metodo: "GET" | "POST", caminh
     r = await buscar(`${BASE}${caminho}`, {
       method: metodo,
       headers: { Authorization: `Bearer ${config.token}`, "Content-Type": "application/json", Accept: "application/json" },
-      body: corpo === undefined ? undefined : JSON.stringify(corpo),
+      ...(corpo === undefined ? {} : { body: JSON.stringify(corpo) }),
       signal: AbortSignal.timeout(20_000),
       cache: "no-store",
     });
