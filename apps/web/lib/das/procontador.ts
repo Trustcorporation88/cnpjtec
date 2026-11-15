@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { configuracaoBothub, consultarRobo, ErroBothub, guiasDoExtrato, lerExtrato, lerPedido, pedirAoRobo, type ConfiguracaoBothub } from "./bothub";
 
 /**
  * Cliente do serviço de extrato do DAS MEI no ProContador SaaS.
@@ -10,9 +11,13 @@ import { z } from "zod";
 export interface ConfiguracaoDas {
   url: string;
   token: string;
+  /** Quando presente, a consulta vai direto ao robô do BotHub, sem passar pelo SaaS. */
+  bothub?: ConfiguracaoBothub;
 }
 
 export function configuracaoDas(env: Record<string, string | undefined> = process.env): ConfiguracaoDas | null {
+  const bothub = configuracaoBothub(env);
+  if (bothub) return { url: "", token: "", bothub };
   const url = env.PROCONTADOR_API_URL?.trim().replace(/\/$/, "");
   const token = env.PROCONTADOR_SERVICO_TOKEN?.trim();
   if (!url || !token || token.length < 32) return null;
@@ -91,6 +96,14 @@ export async function pedirExtrato(
   ano: number,
   buscar: typeof fetch = fetch,
 ): Promise<{ pedido: string; repetido: boolean }> {
+  if (config.bothub) {
+    try {
+      return await pedirAoRobo(config.bothub, cnpj, ano, buscar);
+    } catch (erro) {
+      if (erro instanceof ErroBothub) throw new ErroDas(erro.status, erro.message);
+      throw erro;
+    }
+  }
   const c = (await chamar(config, "extrato", { method: "POST", body: JSON.stringify({ cnpj, ano }) }, buscar)) as {
     pedido: string;
     repetido: boolean;
@@ -100,6 +113,36 @@ export async function pedirExtrato(
 }
 
 export async function consultarExtrato(config: ConfiguracaoDas, pedido: string, buscar: typeof fetch = fetch): Promise<Consulta> {
+  if (config.bothub) {
+    const lido = lerPedido(pedido);
+    if (!lido) throw new ErroDas(400, "Pedido inválido.");
+    let r;
+    try {
+      r = await consultarRobo(config.bothub, lido.jobId, buscar);
+    } catch (erro) {
+      if (erro instanceof ErroBothub) throw new ErroDas(erro.status, erro.message);
+      throw erro;
+    }
+    if (!r.terminal) return { pronto: false, status: r.status };
+    if (r.status !== "FINISHED") {
+      return { pronto: true, status: r.status, extrato: null, guias: [], erro: "O robô não conseguiu ler o PGMEI desta vez." };
+    }
+    try {
+      const extrato = lerExtrato(r.resposta);
+      if (!extrato.confiavel) {
+        return { pronto: true, status: r.status, extrato: null, guias: [], erro: "O PGMEI mudou de formato e a leitura não é confiável." };
+      }
+      return {
+        pronto: true,
+        status: r.status,
+        extrato: { situacaoGeralTexto: extrato.situacaoGeralTexto, dividaAtiva: extrato.dividaAtiva, meses: extrato.meses.map((m) => ({ ...m })) },
+        guias: guiasDoExtrato(extrato, lido.ano),
+        erro: extrato.erro,
+      };
+    } catch {
+      return { pronto: true, status: r.status, extrato: null, guias: [], erro: "Não conseguimos ler a resposta do robô." };
+    }
+  }
   if (!/^site:das-mei:\d{14}:\d{4}:\d{4}-\d{2}-\d{2}$/.test(pedido)) throw new ErroDas(400, "Pedido inválido.");
   const corpo = await chamar(config, `extrato/${encodeURIComponent(pedido)}`, { method: "GET" }, buscar);
   const lido = Consulta.safeParse(corpo);
