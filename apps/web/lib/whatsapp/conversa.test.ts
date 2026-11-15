@@ -108,3 +108,12 @@ describe("DAS pelo WhatsApp", () => {
     expect(r.mensagens[0]).toContain("pgmei.app");
   });
 });
+
+describe("boleto escrito com palavras", () => {
+  it("'quero o boleto do das' no menu vai para a opção 2", async () => {
+    const { ehPerguntaLivre } = await import("./conversa");
+    const menu = { etapa: "menu" as const, atividades: [] };
+    expect(ehPerguntaLivre(menu, "quero o boleto do DAS")).toBe(false);
+    expect(responder(menu, "quero o boleto do DAS").mensagens.join(" ")).toMatch(/PGMEI|CNPJ/);
+  });
+});
