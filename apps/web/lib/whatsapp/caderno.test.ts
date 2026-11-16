@@ -145,3 +145,25 @@ describe("telefone da conta", () => {
     expect(telefoneDaConta(null)).toBeNull();
   });
 });
+
+describe("projeção com poucos dados", () => {
+  it("não projeta o ano com só o mês corrente anotado", async () => {
+    const { deps } = depsFalsas({ conta: true });
+    const r = await tratarCaderno(undefined, "vendi 150 de perfume", TEL, deps);
+    const t = r!.mensagens.join("\n");
+    expect(t).toContain("Você começou a anotar em novembro");
+    expect(t).not.toContain("o ano fecha em");
+  });
+
+  it("meses antes da primeira venda não contam como zero", async () => {
+    const vendas: Venda[] = [
+      { data: "2026-09-10", valor: "6000.00", tipo: "mercadoria", compradorTemCnpj: false },
+      { data: "2026-10-10", valor: "6000.00", tipo: "mercadoria", compradorTemCnpj: false },
+    ];
+    const { deps } = depsFalsas({ conta: true, vendas });
+    const t = (await tratarCaderno({ etapa: "menu", atividades: [] }, "minhas vendas", TEL, deps))!.mensagens.join("\n");
+    // Com média de R$ 4.000 por mês (set, out e nov ainda em zero), o ano projetado passa de R$ 40 mil, não fica em R$ 12 mil.
+    expect(t).not.toContain("R$ 13.");
+    expect(t).not.toContain("passou do limite");
+  });
+});
