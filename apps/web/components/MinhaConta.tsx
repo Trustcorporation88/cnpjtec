@@ -55,6 +55,7 @@ export function MinhaConta() {
         <h2 id="t-servicos">O que fica guardado</h2>
         <ul className="lista-links">
           <li><Link href="/caderno">Caderno de vendas</Link>: as vendas que você anota, para o limite e a declaração anual.</li>
+          <li><Link href="/declaracao">Declaração anual</Link>: os valores da DASN-SIMEI tirados do caderno, prontos para copiar.</li>
           <li><Link href="/cofre">Cofre de notas</Link>: as notas das compras que você fez da marca, para provar de onde veio a mercadoria.</li>
         </ul>
       </section>

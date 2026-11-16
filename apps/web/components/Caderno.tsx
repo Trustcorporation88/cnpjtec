@@ -3,6 +3,7 @@
 import { resumirVendas } from "@cnpjtec/motor-regras";
 import { medirCaderno } from "@/lib/caderno-limite";
 import { baseDeRegras } from "@cnpjtec/regras";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { lerValor, mostrarValor } from "@/lib/dinheiro";
 import {
@@ -264,6 +265,9 @@ export function Caderno() {
         </dl>
         <p className="observacao">
           A declaração também pergunta se você teve empregado no ano. Isso o caderno não sabe, responda na hora.
+        </p>
+        <p>
+          <Link className="botao" href="/declaracao">Ver a declaração pronta para copiar</Link>
         </p>
         {resumo.totalDoAno.vendasParaEmpresa > 0 && (
           <p className="observacao">

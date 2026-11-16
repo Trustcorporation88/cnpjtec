@@ -167,3 +167,49 @@ describe("projeção com poucos dados", () => {
     expect(t).not.toContain("passou do limite");
   });
 });
+
+describe("declaração anual pelo WhatsApp", () => {
+  const venda = (data: string, valor: string, tipo: Venda["tipo"] = "mercadoria"): Venda => ({ data, valor, tipo, compradorTemCnpj: false });
+
+  it("entende os jeitos de pedir", () => {
+    expect(comandoDoCaderno("Declaração")).toEqual({ tipo: "declaracao", ano: null });
+    expect(comandoDoCaderno("declaração anual do MEI")).toEqual({ tipo: "declaracao", ano: null });
+    expect(comandoDoCaderno("DASN")).toEqual({ tipo: "declaracao", ano: null });
+    expect(comandoDoCaderno("dasn-simei 2026")).toEqual({ tipo: "declaracao", ano: 2026 });
+    expect(comandoDoCaderno("declaração de 2026?")).toEqual({ tipo: "declaracao", ano: 2026 });
+    expect(ehPerguntaLivre({ etapa: "menu", atividades: [] }, "declaração")).toBe(false);
+    expect(comandoDoCaderno("como faço a declaração do MEI?")).toBeNull();
+  });
+
+  it("monta a prévia do ano com os valores separados", async () => {
+    const { deps } = depsFalsas({
+      conta: true,
+      vendas: [venda("2026-10-02", "1000"), venda("2026-11-03", "200", "servico")],
+    });
+    const r = await tratarCaderno({ etapa: "menu", atividades: [] }, "declaração", TEL, deps);
+    const texto = r!.mensagens.join("\n");
+    expect(texto).toContain("Declaração anual do MEI de 2026");
+    expect(texto).toContain("prévia");
+    expect(texto).toContain("Receita bruta total: *R$ 1.200,00*");
+    expect(texto).toContain("comércio e indústria: *R$ 1.000,00*");
+    expect(texto).toContain("janeiro, fevereiro");
+    expect(texto).toContain("https://site/declaracao");
+    expect(texto).not.toContain("—");
+  });
+
+  it("sem conta, lembra que a declaração sai com zero", async () => {
+    const { deps, estado } = depsFalsas();
+    const r = await tratarCaderno(undefined, "dasn", TEL, deps);
+    expect(r!.mensagens.join("\n")).toContain("R$ 0,00");
+    expect(estado.conta).toBe(false);
+  });
+
+  it("avisa do excesso de limite e do ano que não dá para montar", async () => {
+    const vendas = Array.from({ length: 10 }, (_, i) => venda(`2026-${String(i + 1).padStart(2, "0")}-05`, "10000"));
+    const { deps } = depsFalsas({ conta: true, vendas });
+    const r = await tratarCaderno(undefined, "declaração 2026", TEL, deps);
+    expect(r!.mensagens.join("\n")).toContain("mais de 20%");
+    const r2 = await tratarCaderno(undefined, "declaração 2024", TEL, deps);
+    expect(r2!.mensagens.join("\n")).toContain("Consigo montar a declaração destes anos: 2026");
+  });
+});

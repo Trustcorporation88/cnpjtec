@@ -6,3 +6,5 @@ export { resumirVendas } from "./vendas";
 export type { ResumoDeVendas, TipoDeVenda, TotaisDeVendas, Venda } from "./vendas";
 export { simularRegimes } from "./simulador";
 export type { EntradaDoSimulador, ResultadoDoSimulador } from "./simulador";
+export { anoDaDeclaracao, prepararDeclaracao } from "./declaracao";
+export type { Declaracao, EntradaDaDeclaracao, FaixaDoLimite, SituacaoDaDeclaracao } from "./declaracao";
