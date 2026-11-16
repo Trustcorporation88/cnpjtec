@@ -1,4 +1,8 @@
+import { NotaInvalida } from "@/lib/cofre/nfe";
+import { configuracaoDaConta } from "@/lib/conta/servidor";
+import { depsDoCaderno, telefoneDaConta } from "@/lib/conta/whatsapp";
 import { criarLimite } from "@/lib/radar";
+import { tratarCaderno, tratarNotaRecebida, type RespostaDoCaderno } from "@/lib/whatsapp/caderno";
 import {
   anoEmSaoPaulo,
   configuracaoDas,
@@ -11,6 +15,8 @@ import {
 import { conversar, iaAtiva, type Mensagem } from "@/lib/ia/assistente";
 import { ehPerguntaLivre, limpar, responder, type Estado } from "@/lib/whatsapp/conversa";
 import {
+  baixarArquivo,
+  ehXml,
   configuracaoEvolution,
   enviarTexto,
   lerEvento,
@@ -94,6 +100,52 @@ export async function POST(request: Request): Promise<Response> {
   // Em números que também falam com outros robôs, só entramos com a palavra de entrada.
   if (!anterior && mensagem.numero && config.comPalavra.has(mensagem.numero) && limpar(mensagem.texto) !== config.palavra) {
     return Response.json({ ok: true, tratou: false });
+  }
+
+  const conta = configuracaoDaConta();
+  const site = (process.env.SITE_URL ?? "https://web-production-5fc35120.up.railway.app").replace(/\/$/, "");
+  const telefone = telefoneDaConta(mensagem.numero);
+  const responderCaderno = async (r: RespostaDoCaderno) => {
+    conversas.gravar(mensagem.destino, r.estado);
+    try {
+      for (const texto of r.mensagens) await enviarTexto(config, mensagem.destino, texto);
+    } catch (erro) {
+      console.error("whatsapp: falha ao enviar", erro instanceof Error ? erro.message : erro);
+    }
+    return Response.json({ ok: true, tratou: true });
+  };
+
+  if (mensagem.documento) {
+    if (!conta || !ehXml(mensagem.documento)) {
+      return responderCaderno({
+        estado: anterior ?? { etapa: "menu", atividades: [] },
+        mensagens: ["Por enquanto eu só leio o arquivo XML da nota de compra. Foto e PDF ainda não. Mande 0 para ver o menu."],
+      });
+    }
+    try {
+      const xml = (await baixarArquivo(config, mensagem.id)).toString("utf8");
+      return responderCaderno(await tratarNotaRecebida(telefone, xml, depsDoCaderno(conta, site)));
+    } catch (erro) {
+      const texto =
+        erro instanceof NotaInvalida
+          ? `Não consegui guardar essa nota: ${erro.message}`
+          : "Não consegui abrir o arquivo agora. Tente de novo daqui a pouco ou guarde pelo site, no cofre.";
+      if (!(erro instanceof NotaInvalida)) console.error("whatsapp: nota", erro instanceof Error ? erro.message : erro);
+      return responderCaderno({ estado: anterior ?? { etapa: "menu", atividades: [] }, mensagens: [texto] });
+    }
+  }
+
+  if (conta) {
+    try {
+      const r = await tratarCaderno(anterior, mensagem.texto, telefone, depsDoCaderno(conta, site));
+      if (r) return responderCaderno(r);
+    } catch (erro) {
+      console.error("whatsapp: caderno", erro instanceof Error ? erro.message : erro);
+      return responderCaderno({
+        estado: { etapa: "menu", atividades: [] },
+        mensagens: [`Não consegui anotar agora. Tente de novo daqui a pouco ou anote pelo site: ${site}/caderno`],
+      });
+    }
   }
 
   if (iaAtiva() && ehPerguntaLivre(anterior, mensagem.texto) && perguntasPorHora(mensagem.destino)) {

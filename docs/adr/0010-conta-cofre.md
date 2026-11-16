@@ -20,3 +20,10 @@
 - A IA só conversa: diagnóstico e simulação vêm das ferramentas `diagnosticar` e `simular`, que chamam o mesmo motor do site. Regras citadas vêm de `buscar_regra`.
 - Minimização: o telefone nunca vai para a API; CPF, CNPJ, cartão e e-mail digitados são trocados por marcadores antes do envio.
 - Modelo da conversa por `MODELO_CONVERSA` (padrão `claude-sonnet-5-5`).
+
+## Caderno e cofre pelo WhatsApp (atualização de 16/11/2026)
+- O WhatsApp acha a conta pelo número, que é o mesmo login do site. Funções `srv_wa_*` (migração `20261116120000_caderno_whatsapp.sql`) recebem o telefone e exigem a chave do servidor.
+- Comandos: "vendi 150", "vendi 80 serviço", "vendi 300 para empresa", "minhas vendas", "desfazer" (últimas 24 horas) e arquivo XML de nota encaminhado.
+- Na primeira vez, nada é guardado sem o "sim" da pessoa; o "sim" cria a conta com o mesmo consentimento do site.
+- Depois de cada venda, o total do ano e o limite do MEI pelo mesmo cálculo do Caderno do site (`lib/caderno-limite.ts`), com aviso do mês em que estoura.
+- Na linha compartilhada com o n8n, arquivos não chegam ao ProContador, porque o workflow só repassa texto. Com número próprio, o XML funciona.

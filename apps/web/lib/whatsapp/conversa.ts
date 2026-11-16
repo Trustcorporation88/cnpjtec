@@ -1,4 +1,5 @@
 import { cnpjValido, configuracaoDas } from "../das/procontador";
+import { comandoDoCaderno, type Pendente } from "./caderno";
 import { lerValor, mostrarValor } from "../dinheiro";
 import { diagnosticar, TIPOS_DE_ATIVIDADE, type Respostas } from "../respostas";
 
@@ -10,7 +11,7 @@ import { diagnosticar, TIPOS_DE_ATIVIDADE, type Respostas } from "../respostas";
 type Tipo = (typeof TIPOS_DE_ATIVIDADE)[number];
 type SimNao = "sim" | "nao" | "nao_sei";
 
-export type Etapa = "menu" | "das_cnpj" | "vinculo" | "temMei" | "atividade" | "valor" | "outra" | "uf" | "ie";
+export type Etapa = "menu" | "das_cnpj" | "consentir_conta" | "vinculo" | "temMei" | "atividade" | "valor" | "outra" | "uf" | "ie";
 
 export interface Estado {
   etapa: Etapa;
@@ -19,6 +20,8 @@ export interface Estado {
   atividades: { tipo: Tipo; mediaMensal: string }[];
   tipoAtual?: Tipo;
   uf?: string;
+  /** Venda ou nota esperando o "sim" para criar a conta. */
+  pendente?: Pendente;
 }
 
 export interface Resposta {
@@ -76,6 +79,7 @@ function menu(comIa = process.env.ANTHROPIC_API_KEY ? true : false): string {
     "1. Fazer o Raio-X (leva 2 minutos)",
     "2. Boleto do DAS (guia mensal do MEI)",
     "3. Entender o CNPJ técnico",
+    "4. Anotar vendas e ver o limite do MEI",
     ...(comIa ? ["", "Ou escreva a sua dúvida do seu jeito."] : []),
     "",
     "Mande 0 a qualquer momento para voltar a este menu, ou sair para encerrar.",
@@ -194,6 +198,7 @@ export function ehPerguntaLivre(estado: Estado | undefined, recebido: string): b
   if (VOLTAR.has(texto) || texto === "sair" || texto === "encerrar") return false;
   if (/^\d{1,2}$/.test(texto)) return false;
   if (pedeBoletoDoDas(recebido)) return false;
+  if (comandoDoCaderno(recebido)) return false;
   return texto.length >= 4;
 }
 
@@ -267,6 +272,9 @@ export function responder(anterior: Estado | undefined, recebido: string): Respo
       }
       return { estado, mensagens: [NAO_ENTENDI, menu()] };
     }
+
+    case "consentir_conta":
+      return { estado: { etapa: "menu", atividades: [] }, mensagens: [menu()] };
 
     case "das_cnpj": {
       const cnpj = cnpjValido(recebido);
