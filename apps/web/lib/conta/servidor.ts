@@ -37,6 +37,9 @@ export function configuracaoDaConta(
 
 export class ErroDeSessao extends Error {}
 
+/** A sessão é válida, mas a conta não tem acesso a esta área. */
+export class ErroDePermissao extends Error {}
+
 /** Chama uma função srv_ do banco. Sessão inválida vira ErroDeSessao. */
 export async function chamar<T>(
   config: ConfiguracaoDaConta,
@@ -58,6 +61,7 @@ export async function chamar<T>(
   const texto = await resposta.text();
   if (!resposta.ok) {
     if (texto.includes("28000") || texto.includes("sessao invalida")) throw new ErroDeSessao();
+    if (texto.includes("sem permissao")) throw new ErroDePermissao();
     throw new Error(`Banco respondeu ${resposta.status} em ${funcao}.`);
   }
   return (texto ? JSON.parse(texto) : null) as T;

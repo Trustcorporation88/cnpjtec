@@ -5,6 +5,7 @@ import { lerValor } from "@/lib/dinheiro";
 import type { RespostaDoRaioX } from "@/lib/respostas";
 import type { DadosDoRadar } from "./Radar";
 import { Resultado } from "./Resultado";
+import { medir } from "@/lib/medir";
 
 type TipoAtividade =
   | "transporte_passageiros"
@@ -155,7 +156,9 @@ export function RaioX({ ano, radar }: { ano: number; radar: DadosDoRadar | null 
         setErro(problema?.detail ?? "Não deu para montar o resultado. Tente de novo.");
         return;
       }
-      setResposta((await r.json()) as RespostaDoRaioX);
+      const resultado = (await r.json()) as RespostaDoRaioX;
+      medir("raio_x_concluido");
+      setResposta(resultado);
       requestAnimationFrame(() => window.scrollTo({ top: 0 }));
     } catch {
       setErro("Sem conexão com a internet. Confira o sinal e tente de novo.");

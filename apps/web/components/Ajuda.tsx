@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { medir } from "@/lib/medir";
 
 const TRILHAS = new Set(["A_NANO", "B_PF_CONTRIBUINTE", "C_MEI_SERVICO", "D_MEI_REVENDA", "E_ME_EPP", "FORA_DO_ALCANCE"]);
 
@@ -44,6 +45,7 @@ export function Ajuda() {
       const c = (await r.json().catch(() => null)) as { detail?: string } | null;
       return setErro(c?.detail ?? "Não deu certo. Tente de novo.");
     }
+    medir("duvida_enviada", { com_conta: Boolean(conta) });
     setEnviado(true);
   }
 

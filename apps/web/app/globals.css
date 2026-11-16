@@ -1012,3 +1012,111 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
   border: 3px solid var(--marca-verde);
   border-radius: 6px;
 }
+
+/* Painel do contador */
+
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0;
+  margin: 1.5rem 0 2rem;
+  border-top: 2px solid var(--tinta);
+}
+
+.numeros div {
+  padding: 0.75rem 0.75rem 0.9rem 0;
+  border-bottom: 1px solid #c9cfcc;
+}
+
+.numeros dt {
+  color: var(--apoio);
+  font-size: 0.9rem;
+}
+
+.numeros dd {
+  margin: 0.15rem 0 0;
+  font-family: var(--placa);
+  font-size: 2rem;
+  font-weight: 750;
+  font-stretch: 88%;
+  font-variant-numeric: tabular-nums;
+}
+
+.numeros small {
+  font-family: var(--texto);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--apoio);
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+}
+
+.filtros [aria-pressed="true"] {
+  color: var(--tinta);
+  font-weight: 700;
+  text-decoration-thickness: 3px;
+  text-decoration-color: var(--marca-bronze);
+}
+
+.pedidos {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pedido {
+  padding: 1.25rem 0 1.5rem;
+  border-top: 1px solid #c9cfcc;
+}
+
+.pedido.situacao-aberto {
+  border-top: 3px solid var(--marca-bronze);
+}
+
+.pedido .pergunta {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.pedido .acoes {
+  margin-top: 1rem;
+}
+
+.pedido .principal {
+  flex: 0 1 auto;
+  min-height: 3rem;
+  font-size: 1.05rem;
+}
+
+/* Aceite da medição */
+
+.medicao {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 10;
+  padding: 1rem 1.25rem 1.25rem;
+  background: var(--papel);
+  border-top: 3px solid var(--marca-bronze);
+  box-shadow: 0 -0.5rem 1.5rem rgb(2 50 46 / 0.12);
+}
+
+.medicao p {
+  max-width: var(--coluna);
+  margin: 0 auto;
+}
+
+.medicao .acoes {
+  max-width: var(--coluna);
+  margin: 0.75rem auto 0;
+}
+
+@media print {
+  .medicao {
+    display: none;
+  }
+}

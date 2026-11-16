@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { medir } from "@/lib/medir";
 
 interface EstadoDaConta {
   disponivel: boolean;
@@ -64,6 +65,8 @@ export function Entrar() {
     setEnviando(false);
     if (!r) return setErro("Sem conexão. Confira a internet e tente de novo.");
     if (!r.ok) return setErro(await detalheDoErro(r));
+    const { nova } = ((await r.json().catch(() => ({}))) as { nova?: boolean });
+    if (nova) medir("conta_criada", { canal: "site" });
     window.location.assign(destinoSeguro(new URLSearchParams(location.search).get("voltar")));
   }
 

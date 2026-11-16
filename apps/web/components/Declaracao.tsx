@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { carregarDoAparelho, juntarCadernos, lerCaderno, type Caderno } from "@/lib/caderno";
 import { fraseDoLimite, fraseDoPrazo, fraseDosMeses, MESES, SERVICO_DASN } from "@/lib/declaracao";
 import { mostrarValor } from "@/lib/dinheiro";
+import { medir } from "@/lib/medir";
 
 function hoje(): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
@@ -191,7 +192,10 @@ export function Declaracao() {
               </li>
             </ol>
             <div className="acoes nao-imprimir">
-              <button type="button" className="principal" onClick={() => window.print()}>
+              <button type="button" className="principal" onClick={() => {
+                  medir("declaracao_impressa");
+                  window.print();
+                }}>
                 Imprimir ou salvar em PDF
               </button>
               <Link className="botao" href="/caderno">Voltar ao caderno</Link>
