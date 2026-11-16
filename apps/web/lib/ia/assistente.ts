@@ -177,7 +177,7 @@ export async function conversar(
   const sistema =
     SISTEMA +
     (opcoes.canal === "whatsapp"
-      ? "\n\nVocê está no WhatsApp: use *negrito* com asterisco, sem markdown de títulos. Indique o site como https://web-production-5fc35120.up.railway.app mais o caminho."
+      ? `\n\nVocê está no WhatsApp: use *negrito* com asterisco, sem markdown de títulos. Indique o site como ${(process.env.SITE_URL ?? "https://app.procontador.com.br").replace(/\/$/, "")} mais o caminho.`
       : "");
 
   for (let rodada = 0; rodada < 6; rodada++) {

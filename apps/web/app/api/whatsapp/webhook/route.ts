@@ -120,7 +120,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const conta = configuracaoDaConta();
-  const site = (process.env.SITE_URL ?? "https://web-production-5fc35120.up.railway.app").replace(/\/$/, "");
+  const site = (process.env.SITE_URL ?? "https://app.procontador.com.br").replace(/\/$/, "");
   const telefone = telefoneDaConta(mensagem.numero);
   const responderCaderno = async (r: RespostaDoCaderno) => {
     await conversas.gravar(mensagem.destino, r.estado);

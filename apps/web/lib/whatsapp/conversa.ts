@@ -68,7 +68,7 @@ const UFS = new Set(
 );
 
 function site(): string {
-  return (process.env.SITE_URL ?? "https://web-production-5fc35120.up.railway.app").replace(/\/$/, "");
+  return (process.env.SITE_URL ?? "https://app.procontador.com.br").replace(/\/$/, "");
 }
 
 function menu(comIa = process.env.ANTHROPIC_API_KEY ? true : false): string {
