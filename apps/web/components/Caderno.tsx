@@ -284,15 +284,17 @@ export function Caderno() {
             Já usado: {limite.percentualUsado.replace(".", ",")}% de {mostrarValor(limite.limite)}
           </p>
           <p>
-            {limite.mesQueEstoura === null
-              ? "No ritmo das vendas anotadas, você fecha o ano dentro do limite."
-              : limite.estouroConfirmado
-                ? `Pelas vendas anotadas, você passou do limite em ${MESES[limite.mesQueEstoura - 1]}. Fale com um contador.`
-                : `No ritmo das vendas anotadas, você passa do limite em ${MESES[limite.mesQueEstoura - 1]}.`}
+            {limite.estouroConfirmado && limite.mesQueEstoura
+              ? `Pelas vendas anotadas, você passou do limite em ${MESES[limite.mesQueEstoura - 1]}. Fale com um contador.`
+              : !limite.projecaoConfiavel
+                ? `Você começou a anotar em ${MESES[limite.primeiroMesAnotado - 1]}. Com um mês completo anotado, o caderno mostra a projeção do ano.`
+                : limite.mesQueEstoura === null
+                  ? "No ritmo das vendas anotadas, você fecha o ano dentro do limite."
+                  : `No ritmo das vendas anotadas, você passa do limite em ${MESES[limite.mesQueEstoura - 1]}.`}
           </p>
           <p className="observacao">
-            Meses sem venda anotada contam como zero. Se você começou a usar o caderno no meio do ano,
-            anote também as vendas dos meses anteriores.
+            Os meses antes da primeira venda anotada entram na projeção pela média, não como zero. Se você vendeu
+            antes de começar a usar o caderno, anote também essas vendas.
           </p>
         </section>
       )}

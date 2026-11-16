@@ -91,6 +91,17 @@ export function textoDoLimite(vendas: Venda[], agora: Date): string {
   const linhas = [
     `Em ${ano} você já anotou ${mostrarValor(medida.realizado)} em vendas, ${Number(medida.percentualUsado).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}% do limite do MEI de ${mostrarValor(medida.limite)} (regra R14).`,
   ];
+  if (medida.estouroConfirmado && medida.mesQueEstoura) {
+    linhas.push("", `*Atenção:* com o que já foi anotado, você passou do limite em ${MESES[medida.mesQueEstoura - 1]}. Fale com um contador: ${"{site}"}/ajuda`);
+    return linhas.join("\n");
+  }
+  if (!medida.projecaoConfiavel) {
+    linhas.push(
+      "",
+      `Você começou a anotar em ${MESES[medida.primeiroMesAnotado - 1]}. Anote todas as vendas do mês: a partir do mês que vem eu mostro a projeção do ano. Se vendeu antes de começar a anotar, some isso também no caderno do site.`,
+    );
+    return linhas.join("\n");
+  }
   if (medida.mesQueEstoura) {
     linhas.push(
       "",
