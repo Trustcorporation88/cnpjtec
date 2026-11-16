@@ -4,8 +4,10 @@
  * não está disponível. O robô entra no PGMEI, aplicativo oficial: o DAS continua sendo da Receita.
  *
  * Custo: cada pedido FINISHED é cobrado. Travas aqui: um pedido por CNPJ, ano e dia e teto diário
- * (BOTHUB_LIMITE_DIARIO, padrão 30), guardados em memória do servidor.
+ * (BOTHUB_LIMITE_DIARIO, padrão 30), guardados no banco para não zerar a cada publicação.
  */
+
+import { criarMemoriaDuravel, resumo, type MemoriaDuravel } from "../memoria-duravel";
 
 const BASE = "https://api.bothub.bot";
 
@@ -38,18 +40,19 @@ export class ErroBothub extends Error {
   }
 }
 
+
 function diaEmSaoPaulo(agora: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(agora);
 }
 
-const pedidosDoDia = new Map<string, string>();
-let contagem = { dia: "", total: 0 };
+let memoriaPadrao: MemoriaDuravel = criarMemoriaDuravel(null);
 
 /** Esquece os pedidos guardados (usado nos testes). */
 export function zerarMemoria(): void {
-  pedidosDoDia.clear();
-  contagem = { dia: "", total: 0 };
+  memoriaPadrao = criarMemoriaDuravel(null);
 }
+
+const DOIS_DIAS = 2 * 24 * 60 * 60;
 
 async function chamar(config: ConfiguracaoBothub, metodo: "GET" | "POST", caminho: string, corpo: unknown, buscar: typeof fetch) {
   let r: Response;
@@ -75,13 +78,16 @@ export async function pedirAoRobo(
   ano: number,
   buscar: typeof fetch = fetch,
   agora: Date = new Date(),
+  memoria: MemoriaDuravel = memoriaPadrao,
 ): Promise<{ pedido: string; repetido: boolean }> {
   const dia = diaEmSaoPaulo(agora);
   const chave = `${cnpj}:${ano}:${dia}`;
-  const existente = pedidosDoDia.get(chave);
+  const item = `bothub:pedido:${resumo(chave)}`;
+  const existente = await memoria.ler<string>(item);
   if (existente) return { pedido: existente, repetido: true };
-  if (contagem.dia !== dia) contagem = { dia, total: 0 };
-  if (contagem.total >= config.limiteDiario) throw new ErroBothub(429, "Limite diário de consultas atingido.");
+  if (!(await memoria.contar(`bothub:dia:${dia}`, config.limiteDiario, DOIS_DIAS))) {
+    throw new ErroBothub(429, "Limite diário de consultas atingido.");
+  }
 
   const cnpjFormatado = cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
   const corpo = await chamar(
@@ -98,9 +104,8 @@ export async function pedirAoRobo(
   );
   const id = corpo.id;
   if (typeof id !== "string" && typeof id !== "number") throw new ErroBothub(502, "Robô não devolveu o número do pedido.");
-  contagem.total += 1;
   const pedido = `bh:${String(id)}:${cnpj}:${ano}`;
-  pedidosDoDia.set(chave, pedido);
+  await memoria.gravar(item, pedido, DOIS_DIAS);
   return { pedido, repetido: false };
 }
 

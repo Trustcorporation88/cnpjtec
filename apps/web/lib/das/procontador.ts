@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { memoriaDoServidor } from "../memoria-duravel";
 import { configuracaoBothub, consultarRobo, ErroBothub, guiasDoExtrato, lerExtrato, lerPedido, pedirAoRobo, type ConfiguracaoBothub } from "./bothub";
 
 /**
@@ -98,7 +99,7 @@ export async function pedirExtrato(
 ): Promise<{ pedido: string; repetido: boolean }> {
   if (config.bothub) {
     try {
-      return await pedirAoRobo(config.bothub, cnpj, ano, buscar);
+      return await pedirAoRobo(config.bothub, cnpj, ano, buscar, new Date(), memoriaDoServidor());
     } catch (erro) {
       if (erro instanceof ErroBothub) throw new ErroDas(erro.status, erro.message);
       throw erro;
