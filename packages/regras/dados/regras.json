@@ -1,5 +1,5 @@
 {
-  "versao": "0.5.0",
+  "versao": "0.6.0",
   "atualizadoEm": "2026-11-16",
   "parametros": {
     "limiteMeiAnual": {
@@ -452,13 +452,13 @@
         "C",
         "D"
       ],
-      "regra": "O MEI entrega a declaração anual (DASN-SIMEI) até 31 de maio do ano seguinte, informando a receita bruta do ano separada em comércio e indústria e em prestação de serviços, e se teve empregado.",
+      "regra": "O MEI entrega a declaração anual (DASN-SIMEI) até o último dia de maio do ano seguinte, informando a receita bruta total do ano, quanto dela veio de comércio, indústria ou transporte intermunicipal e interestadual, e se teve empregado. Quem não faturou entrega com R$ 0,00.",
       "vigenciaInicio": null,
       "vigenciaFim": null,
-      "fonte": "Resolução CGSN 140/2018, conforme orientações do Sebrae e de portais contábeis",
+      "fonte": "Resolução CGSN 140/2018; serviço \"Declarar receita bruta anual para o MEI\" (gov.br) e Manual da DASN-SIMEI da Receita Federal",
       "status": "EM_VIGOR",
-      "conferencia": "SECUNDARIA",
-      "observacao": "Receita bruta é tudo o que entrou, com ou sem nota, sem descontar gastos."
+      "conferencia": "OFICIAL",
+      "observacao": "Receita bruta é tudo o que entrou, com ou sem nota, sem descontar gastos. A declaração abre em janeiro e só é aceita com as declarações anteriores entregues e as apurações mensais do PGMEI do ano feitas. Entrega gratuita pelo Portal do Simples Nacional ou pelo app MEI."
     },
     {
       "id": "R34",
@@ -512,6 +512,34 @@
       "fonte": "Projeto de Lei Orçamentária Anual de 2027, enviado em 31/8/2026",
       "status": "ESTIMATIVA",
       "conferencia": "SECUNDARIA"
+    },
+    {
+      "id": "R38",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "MEI que passa do limite anual em até 20% entrega a DASN-SIMEI normalmente, paga um DAS complementar sobre o excesso gerado na própria declaração e deixa de ser MEI a partir de 1º de janeiro do ano seguinte. Acima de 20%, a declaração não é aceita e o desenquadramento vale desde 1º de janeiro do ano do excesso, com apoio de contador.",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "LC 123/2006, art. 18-A, § 7º, III; Manual da DASN-SIMEI e página de desenquadramento do MEI (gov.br)",
+      "status": "EM_VIGOR",
+      "conferencia": "OFICIAL",
+      "observacao": "A comunicação do desenquadramento vai até o último dia útil do mês seguinte ao do excesso."
+    },
+    {
+      "id": "R39",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "A DASN-SIMEI entregue depois do prazo gera multa de 2% ao mês sobre os tributos declarados, limitada a 20%, com mínimo de R$ 50,00. Paga em até 30 dias, a multa cai pela metade.",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "LC 123/2006, art. 38-A; Portal do Empreendedor, \"O que acontece quando o MEI não faz sua declaração anual\"",
+      "status": "EM_VIGOR",
+      "conferencia": "OFICIAL",
+      "observacao": "O boleto da multa sai junto com o recibo de entrega."
     }
   ]
 }

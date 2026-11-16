@@ -1,5 +1,7 @@
-import type { Venda } from "@cnpjtec/motor-regras";
+import { anoDaDeclaracao, ParametroAusente, PerfilInvalido, prepararDeclaracao, type Venda } from "@cnpjtec/motor-regras";
+import { baseDeRegras } from "@cnpjtec/regras";
 import { medirCaderno } from "../caderno-limite";
+import { textoDaDeclaracao } from "../declaracao";
 import { lerValor, mostrarValor } from "../dinheiro";
 import type { Estado } from "./conversa";
 import { limpar } from "./conversa";
@@ -20,6 +22,7 @@ export type Comando =
   | { tipo: "venda"; valor: string; tipoDeVenda: "mercadoria" | "servico"; compradorTemCnpj: boolean; descricao: string }
   | { tipo: "resumo" }
   | { tipo: "desfazer" }
+  | { tipo: "declaracao"; ano: number | null }
   | { tipo: "ajuda" };
 
 export interface DepsCaderno {
@@ -45,6 +48,8 @@ export function comandoDoCaderno(recebido: string): Comando | null {
   const texto = limpar(recebido);
   if (/^(minhas vendas|meu caderno|meu limite|limite|quanto vendi|total do ano|resumo)$/.test(texto)) return { tipo: "resumo" };
   if (/^(desfazer|apagar a ultima|apaga a ultima|apagar ultima|cancelar a ultima)$/.test(texto)) return { tipo: "desfazer" };
+  const dasn = /^(?:minha |a )?(?:declaracao(?: anual)?(?: do mei)?|dasn(?:[ -]?simei)?)(?: (?:de )?(\d{4}))?$/.exec(texto);
+  if (dasn) return { tipo: "declaracao", ano: dasn[1] ? Number(dasn[1]) : null };
   if (/^(caderno|anotar venda|anotar vendas|como anotar)$/.test(texto)) return { tipo: "ajuda" };
   const m = VENDA.exec(recebido.trim());
   if (!m) return null;
@@ -71,11 +76,12 @@ export const AJUDA_CADERNO = [
   "Outros pedidos:",
   "• *minhas vendas*: total do ano e o limite do MEI",
   "• *desfazer*: apaga a última venda anotada",
+  "• *declaração*: os valores da declaração anual do MEI (DASN-SIMEI)",
   "",
   "Também dá para encaminhar aqui o arquivo XML da nota de compra da marca, que eu guardo no cofre.",
 ].join("\n");
 
-function dataHoje(agora: Date): string {
+export function dataHoje(agora: Date): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(agora);
 }
 
@@ -115,6 +121,22 @@ export function textoDoLimite(vendas: Venda[], agora: Date): string {
     linhas.push(`No ritmo de agora, o ano fecha em ${mostrarValor(medida.projetadoNoAno)}, dentro do limite.`);
   }
   return linhas.join("\n");
+}
+
+/** Valores da declaração anual a partir das vendas anotadas. */
+function declaracao(vendas: Venda[], pedido: number | null, deps: DepsCaderno): string {
+  const hoje = dataHoje(deps.agora());
+  const ano = pedido ?? anoDaDeclaracao(hoje);
+  try {
+    const d = prepararDeclaracao({ vendas, anoCalendario: ano, hoje }, baseDeRegras.parametros);
+    return textoDaDeclaracao(d, deps.site);
+  } catch (e) {
+    if (e instanceof PerfilInvalido || e instanceof ParametroAusente) {
+      const anos = Object.keys(baseDeRegras.parametros.limiteMeiAnual).filter((a) => Number(a) <= Number(hoje.slice(0, 4)));
+      return `Consigo montar a declaração destes anos: ${anos.join(", ")}. Mande, por exemplo, *declaração ${anos.at(-1)}*.`;
+    }
+    throw e;
+  }
 }
 
 async function anotar(telefone: string, venda: VendaNova, deps: DepsCaderno): Promise<string> {
@@ -177,6 +199,9 @@ export async function tratarCaderno(
   }
 
   const conta = await deps.temConta(telefone);
+  if (comando.tipo === "declaracao") {
+    return { estado: menu, mensagens: [declaracao(conta ? await deps.vendas(telefone) : [], comando.ano, deps)] };
+  }
   if (comando.tipo === "resumo" || comando.tipo === "desfazer") {
     if (!conta) return { estado: menu, mensagens: ["Você ainda não anotou vendas aqui. Mande, por exemplo, *vendi 150*."] };
     if (comando.tipo === "resumo") {
