@@ -65,6 +65,8 @@ export async function POST(request: Request): Promise<Response> {
       `Responder para: ${telefone}`,
       "",
       corpo.data.pergunta.slice(0, 1500),
+      "",
+      `Painel: ${(process.env.SITE_URL ?? "").replace(/\/$/, "")}/contador`,
     ].join("\n");
     await enviarTexto(evolution, plantao, texto).catch((e) =>
       console.error("ajuda: falha ao avisar o plantão", e instanceof Error ? e.message : e),

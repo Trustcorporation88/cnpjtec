@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Medicao } from "@/components/Medicao";
 
 export const metadata: Metadata = {
   title: "ProContador: imposto de quem trabalha por conta própria",
@@ -19,6 +20,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: "#02322e",
 };
+
+const GA4 = /^G-[A-Z0-9]{4,15}$/.test(process.env.GA4_ID ?? "") ? process.env.GA4_ID! : null;
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -58,6 +61,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             tudo quando quiser.
           </p>
         </footer>
+        {GA4 && <Medicao id={GA4} />}
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { Consulta } from "@/lib/das/procontador";
+import { medir } from "@/lib/medir";
 
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 const ROTULO: Record<string, string> = { PAGO: "Paga", VENCIDO: "Em atraso", EMITIDO: "Em aberto", PENDENTE: "Em aberto", CANCELADO: "Cancelada" };
@@ -68,6 +69,7 @@ export function DasExtrato({ pgmei }: { pgmei: string }) {
       const c = (await r.json().catch(() => null)) as { detail?: string } | null;
       return setErro(c?.detail ?? "Não deu certo. Tente de novo.");
     }
+    medir("das_consultado");
     tentativas.current = 0;
     setPedido(((await r.json()) as { pedido: string }).pedido);
   }

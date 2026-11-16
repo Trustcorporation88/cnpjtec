@@ -6,6 +6,7 @@ import { baseDeRegras } from "@cnpjtec/regras";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { lerValor, mostrarValor } from "@/lib/dinheiro";
+import { medir } from "@/lib/medir";
 import {
   carregarDoAparelho,
   guardarNoAparelho,
@@ -121,6 +122,7 @@ export function Caderno() {
     setValor("");
     setDescricao("");
     setAviso(`Venda de ${mostrarValor(lido)} anotada.`);
+    medir("venda_anotada", { tipo, canal: "site" });
   }
 
   function apagar(id: string) {
