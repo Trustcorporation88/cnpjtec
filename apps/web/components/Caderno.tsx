@@ -1,6 +1,7 @@
 "use client";
 
-import { medirLimite, resumirVendas, type ReceitaDoMes } from "@cnpjtec/motor-regras";
+import { resumirVendas } from "@cnpjtec/motor-regras";
+import { medirCaderno } from "@/lib/caderno-limite";
 import { baseDeRegras } from "@cnpjtec/regras";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { lerValor, mostrarValor } from "@/lib/dinheiro";
@@ -155,18 +156,7 @@ export function Caderno() {
 
   const resumo = useMemo(() => resumirVendas(caderno.vendas, ano), [caderno, ano]);
 
-  const limite = useMemo(() => {
-    if (!baseDeRegras.parametros.limiteMeiAnual[String(ano)] || resumo.totalDoAno.quantidade === 0) return null;
-    const agora = new Date();
-    const ultimoMesFechado = ano < agora.getFullYear() ? 12 : ano === agora.getFullYear() ? agora.getMonth() + 1 : 0;
-    if (ultimoMesFechado === 0) return null;
-    const receitas: ReceitaDoMes[] = [];
-    for (const m of resumo.meses.slice(0, ultimoMesFechado)) {
-      receitas.push({ mes: m.mes, tipo: "revenda_mercadoria", valor: m.mercadoria });
-      receitas.push({ mes: m.mes, tipo: "servico", valor: m.servico });
-    }
-    return medirLimite({ anoCalendario: ano, temMei: true, receitas }, baseDeRegras.parametros);
-  }, [resumo, ano]);
+  const limite = useMemo(() => medirCaderno(caderno.vendas, ano), [caderno, ano]);
 
   const vendasDoAno = caderno.vendas
     .filter((v) => v.data.startsWith(`${ano}-`))

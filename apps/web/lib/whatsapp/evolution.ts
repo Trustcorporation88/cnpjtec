@@ -64,6 +64,8 @@ const Evento = z.object({
 
 export interface MensagemRecebida {
   id: string;
+  /** Arquivo encaminhado (por enquanto só tratamos XML de nota). */
+  documento?: { nome: string; tipo: string };
   /** Para onde responder: número com DDI ou o jid completo quando o número não veio. */
   destino: string;
   /** Número com DDI, quando conhecido. */
@@ -90,11 +92,27 @@ export function lerEvento(corpo: unknown): MensagemRecebida | null {
     return null;
   }
 
+  const numero = numeroDoJid(key.remoteJid) ?? numeroDoJid(key.remoteJidAlt) ?? numeroDoJid(key.senderPn);
+  const destino = numero ?? key.remoteJid;
+
+  const bruto = (message ?? {}) as Record<string, unknown>;
+  const doc = (bruto.documentMessage ??
+    ((bruto.documentWithCaptionMessage as { message?: { documentMessage?: unknown } } | undefined)?.message?.documentMessage)) as
+    | { fileName?: unknown; mimetype?: unknown; caption?: unknown }
+    | undefined;
+  if (doc) {
+    return {
+      id: key.id,
+      destino,
+      numero,
+      texto: typeof doc.caption === "string" ? doc.caption.slice(0, 500) : "",
+      documento: { nome: String(doc.fileName ?? "arquivo").slice(0, 120), tipo: String(doc.mimetype ?? "") },
+    };
+  }
+
   const texto = (message?.conversation ?? message?.extendedTextMessage?.text ?? "").trim();
   if (!texto || texto.length > 500) return null;
-
-  const numero = numeroDoJid(key.remoteJid) ?? numeroDoJid(key.remoteJidAlt) ?? numeroDoJid(key.senderPn);
-  return { id: key.id, destino: numero ?? key.remoteJid, numero, texto };
+  return { id: key.id, destino, numero, texto };
 }
 
 /** Envia uma mensagem de texto pela instância configurada. */
@@ -121,4 +139,28 @@ export function segredoConfere(esperado: string, recebido: string | null): boole
   let diferenca = 0;
   for (let i = 0; i < esperado.length; i++) diferenca |= esperado.charCodeAt(i) ^ recebido.charCodeAt(i);
   return diferenca === 0;
+}
+
+/** Baixa o arquivo de uma mensagem recebida (base64), pela Evolution. */
+export async function baixarArquivo(
+  config: ConfiguracaoEvolution,
+  idDaMensagem: string,
+  buscar: typeof fetch = fetch,
+): Promise<Buffer> {
+  const r = await buscar(`${config.url}/chat/getBase64FromMediaMessage/${encodeURIComponent(config.instancia)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: config.chave },
+    body: JSON.stringify({ message: { key: { id: idDaMensagem } }, convertToMp4: false }),
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!r.ok) throw new Error(`Evolution respondeu ${r.status} ao baixar o arquivo.`);
+  const corpo = (await r.json()) as { base64?: unknown };
+  if (typeof corpo.base64 !== "string") throw new Error("Evolution não devolveu o arquivo.");
+  const arquivo = Buffer.from(corpo.base64, "base64");
+  if (arquivo.length > 1_048_576) throw new Error("Arquivo grande demais.");
+  return arquivo;
+}
+
+export function ehXml(documento: { nome: string; tipo: string }): boolean {
+  return /\.xml$/i.test(documento.nome) || /xml/i.test(documento.tipo);
 }
