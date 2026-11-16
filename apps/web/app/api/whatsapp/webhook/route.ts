@@ -12,7 +12,7 @@ import {
   pedirExtrato,
   resumoParaWhatsapp,
 } from "@/lib/das/procontador";
-import { conversar, iaAtiva, type Mensagem } from "@/lib/ia/assistente";
+import { conversar, iaAtiva, minimizar, type Mensagem } from "@/lib/ia/assistente";
 import { ehPerguntaLivre, limpar, responder, type Estado } from "@/lib/whatsapp/conversa";
 import {
   baixarArquivo,
@@ -23,17 +23,33 @@ import {
   segredoConfere,
   type ConfiguracaoEvolution,
 } from "@/lib/whatsapp/evolution";
-import { criarMemoria } from "@/lib/whatsapp/memoria";
+import { memoriaDoServidor, resumo } from "@/lib/memoria-duravel";
 
 export const dynamic = "force-dynamic";
 
-const conversas = criarMemoria<Estado>(30 * 60 * 1000);
-const jaVistas = criarMemoria<true>(10 * 60 * 1000, 20000);
+const MEIA_HORA = 30 * 60;
+const UM_DIA = 24 * 60 * 60;
 const dentroDoLimite = criarLimite(20, 60 * 1000);
-const historicos = criarMemoria<Mensagem[]>(30 * 60 * 1000);
-const perguntasPorHora = criarLimite(30, 60 * 60 * 1000);
+
+/** Estado e histórico da conversa ficam no banco: uma publicação do site não derruba quem está no meio. */
+const conversas = {
+  ler: (destino: string) => memoriaDoServidor().ler<Estado>(`wa:estado:${resumo(destino)}`),
+  gravar: (destino: string, estado: Estado | undefined) =>
+    memoriaDoServidor().gravar(`wa:estado:${resumo(destino)}`, estado, MEIA_HORA),
+};
+const historicos = {
+  ler: (destino: string) => memoriaDoServidor().ler<Mensagem[]>(`wa:historico:${resumo(destino)}`),
+  // Guardado já sem CPF, CNPJ, cartão e e-mail, por no máximo meia hora.
+  gravar: (destino: string, h: Mensagem[] | undefined) =>
+    memoriaDoServidor().gravar(
+      `wa:historico:${resumo(destino)}`,
+      h?.map((m) => ({ ...m, content: minimizar(m.content) })),
+      MEIA_HORA,
+    ),
+};
+const perguntasPorHora = (destino: string) => memoriaDoServidor().contar(`wa:perguntas:${resumo(destino)}`, 30, 60 * 60);
 /** Cada consulta concluída do DAS custa: no máximo 3 por número por dia. */
-const consultasDasPorDia = criarLimite(3, 24 * 60 * 60 * 1000);
+const consultasDasPorDia = (destino: string) => memoriaDoServidor().contar(`wa:das:${resumo(destino)}`, 3, UM_DIA);
 
 const esperar = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -44,7 +60,7 @@ async function consultarDasEmSegundoPlano(config: ConfiguracaoEvolution, destino
   const ano = anoEmSaoPaulo();
   const avisar = (texto: string) =>
     enviarTexto(config, destino, texto).catch((e) => console.error("whatsapp: falha ao enviar", e instanceof Error ? e.message : e));
-  if (!consultasDasPorDia(destino)) {
+  if (!(await consultasDasPorDia(destino))) {
     await avisar(`Você já fez 3 consultas hoje. Amanhã consulto de novo. Enquanto isso, veja direto no PGMEI:\n${PGMEI}`);
     return;
   }
@@ -87,8 +103,9 @@ export async function POST(request: Request): Promise<Response> {
 
   const mensagem = lerEvento(corpo);
   if (!mensagem) return Response.json({ ok: true, tratou: false, ignorado: "evento" });
-  if (jaVistas.ler(mensagem.id)) return Response.json({ ok: true, tratou: false, ignorado: "repetida" });
-  jaVistas.gravar(mensagem.id, true);
+  if (!(await memoriaDoServidor().reservar(`wa:vista:${resumo(mensagem.id)}`, 10 * 60))) {
+    return Response.json({ ok: true, tratou: false, ignorado: "repetida" });
+  }
 
   if (config.permitidos.size > 0 && !(mensagem.numero && config.permitidos.has(mensagem.numero))) {
     console.info("whatsapp: remetente fora da lista de teste", { jid: mensagem.destino.slice(-6) });
@@ -96,7 +113,7 @@ export async function POST(request: Request): Promise<Response> {
   }
   if (!dentroDoLimite(mensagem.destino)) return Response.json({ ok: true, tratou: false, ignorado: "limite" });
 
-  const anterior = conversas.ler(mensagem.destino);
+  const anterior = await conversas.ler(mensagem.destino);
   // Em números que também falam com outros robôs, só entramos com a palavra de entrada.
   if (!anterior && mensagem.numero && config.comPalavra.has(mensagem.numero) && limpar(mensagem.texto) !== config.palavra) {
     return Response.json({ ok: true, tratou: false });
@@ -106,7 +123,7 @@ export async function POST(request: Request): Promise<Response> {
   const site = (process.env.SITE_URL ?? "https://web-production-5fc35120.up.railway.app").replace(/\/$/, "");
   const telefone = telefoneDaConta(mensagem.numero);
   const responderCaderno = async (r: RespostaDoCaderno) => {
-    conversas.gravar(mensagem.destino, r.estado);
+    await conversas.gravar(mensagem.destino, r.estado);
     try {
       for (const texto of r.mensagens) await enviarTexto(config, mensagem.destino, texto);
     } catch (erro) {
@@ -148,8 +165,8 @@ export async function POST(request: Request): Promise<Response> {
     }
   }
 
-  if (iaAtiva() && ehPerguntaLivre(anterior, mensagem.texto) && perguntasPorHora(mensagem.destino)) {
-    const historico = [...(historicos.ler(mensagem.destino) ?? []), { role: "user" as const, content: mensagem.texto }];
+  if (iaAtiva() && ehPerguntaLivre(anterior, mensagem.texto) && (await perguntasPorHora(mensagem.destino))) {
+    const historico = [...((await historicos.ler(mensagem.destino)) ?? []), { role: "user" as const, content: mensagem.texto }];
     let resposta: string;
     try {
       resposta = await conversar(historico, { canal: "whatsapp" });
@@ -157,8 +174,8 @@ export async function POST(request: Request): Promise<Response> {
       console.error("whatsapp: assistente falhou", erro instanceof Error ? erro.message : erro);
       resposta = "Não consegui responder agora. Responda com o número de uma opção do menu ou tente de novo daqui a pouco.";
     }
-    historicos.gravar(mensagem.destino, [...historico, { role: "assistant" as const, content: resposta }].slice(-16));
-    conversas.gravar(mensagem.destino, anterior);
+    await historicos.gravar(mensagem.destino, [...historico, { role: "assistant" as const, content: resposta }].slice(-16));
+    await conversas.gravar(mensagem.destino, anterior);
     try {
       await enviarTexto(config, mensagem.destino, `${resposta}\n\nMande 0 para ver o menu.`);
     } catch (erro) {
@@ -168,8 +185,8 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const { estado, mensagens, acao } = responder(anterior, mensagem.texto);
-  if (!estado) historicos.gravar(mensagem.destino, undefined);
-  conversas.gravar(mensagem.destino, estado);
+  if (!estado) await historicos.gravar(mensagem.destino, undefined);
+  await conversas.gravar(mensagem.destino, estado);
 
   try {
     for (const texto of mensagens) await enviarTexto(config, mensagem.destino, texto);
