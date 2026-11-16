@@ -79,9 +79,9 @@ export default function PaginaDoCnpjTecnico() {
           <p className="situacao">Aguardando a Receita</p>
           <h2>Emita a sua primeira nota</h2>
           <p>
-            Com o número, você passa a emitir nota fiscal eletrônica do seu trabalho. O governo
-            anunciou que parte das exigências de nota pode ficar para março de 2027, mas não disse
-            para quem.
+            Com o número, você passa a emitir nota fiscal eletrônica do seu trabalho. Uma parte das
+            exigências de nota foi adiada para março de 2027 (plataformas digitais e alguns
+            serviços), mas o ato não diz se o adiamento vale para pessoa física.
           </p>
           <p>
             A nota de serviço também depende da prefeitura. Pergunte na sua cidade se o seu serviço

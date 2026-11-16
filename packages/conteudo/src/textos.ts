@@ -156,7 +156,7 @@ export const textoDaPendencia: Record<string, string> = {
   R08: "Você começou no meio do ano. O governo ainda não deixou claro se o limite diminui na mesma proporção. Fizemos a conta proporcional, que é a mais cuidadosa.",
   R09: "Ainda não está definido se a taxa que o aplicativo desconta entra na conta. Fizemos a conta com o valor cheio das corridas, que é o mais cuidadoso.",
   R10: "Ainda não está definido a partir de que dia a pessoa deixa de ser nanoempreendedor quando passa do limite no meio do ano.",
-  R12: "O governo anunciou que parte das exigências de nota pode ficar para março de 2027, mas não disse para quem.",
+  R12: "Uma parte das exigências de nota ficou para março de 2027, mas o ato não diz se isso vale para quem terá CNPJ de pessoa física.",
   R13: "A Receita ainda não publicou o passo a passo do CNPJ técnico: como ele chega, quando e por onde.",
   R30: "A regra de nota de serviço da sua cidade ainda não está no nosso sistema.",
 };

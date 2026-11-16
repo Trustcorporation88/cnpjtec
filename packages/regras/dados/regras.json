@@ -1,6 +1,6 @@
 {
-  "versao": "0.4.0",
-  "atualizadoEm": "2026-11-12",
+  "versao": "0.5.0",
+  "atualizadoEm": "2026-11-16",
   "parametros": {
     "limiteMeiAnual": {
       "2026": {
@@ -184,11 +184,11 @@
       "trilhas": [
         "B"
       ],
-      "regra": "Foi anunciado o adiamento para março de 2027 da exigência de documentos em situações específicas, sem indicação de quais.",
+      "regra": "O Ato Conjunto RFB/CGIBS 7/2026 levou para 1/3/2027 a exigência de documento fiscal de IBS/CBS para plataformas digitais e para os itens 1.03, 1.05, 1.09 e 16.01 da LC 116 e, no Simples Nacional, para as hipóteses fora das alíneas d a h do inciso III. O ato não trata de pessoa física, MEI nem nanoempreendedor, então ainda não se sabe se o adiamento alcança quem terá CNPJ de pessoa física.",
       "vigenciaInicio": null,
       "vigenciaFim": null,
-      "fonte": "Nota do Ministério da Fazenda de 11/11/2026",
-      "status": "ANUNCIADO",
+      "fonte": "Ato Conjunto RFB/CGIBS 7/2026, que altera o art. 1º do Ato Conjunto RFB/CGIBS 4/2026 (texto no sítio do CGIBS)",
+      "status": "A_CONFIRMAR",
       "conferencia": "OFICIAL"
     },
     {
