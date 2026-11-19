@@ -85,7 +85,8 @@ export function lembretesDoDia(a: Assinante, hoje: string, site: string): Lembre
           d.faixa === "excesso_ate_20"
             ? `Passando até 20%, você paga uma guia a mais sobre o excesso e deixa de ser MEI em 1º de janeiro de ${ano + 1}. (regra R38)`
             : `Acima de 20%, você deixa de ser MEI desde janeiro de ${ano}. (regra R38)`,
-          `Fale com um contador antes de vender mais: ${site}/ajuda`,
+          `Veja quanto fica a guia como ME: ${site}/sair-do-mei`,
+          `E fale com um contador antes de vender mais: ${site}/ajuda`,
           "",
           RODAPE,
         ].join("\n"),

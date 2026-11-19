@@ -54,6 +54,30 @@ export const Parametros = z
     fracaoInssMei: Parametro,
     icmsMei: Parametro,
     issMei: Parametro,
+    /**
+     * Tabelas do Simples Nacional por ano: faixas de receita bruta em 12 meses, alíquota nominal,
+     * parcela a deduzir e a parte da CBS e do IBS na guia. Só as faixas 1 a 4 (até R$ 1,8 milhão).
+     */
+    simplesNacional: z
+      .record(
+        z.string().regex(/^\d{4}$/),
+        z.record(
+          z.enum(["I", "III"]),
+          z
+            .object({
+              regra: z.string().regex(/^R\d{2}$/),
+              faixas: z
+                .array(
+                  z
+                    .object({ ate: DecimalTexto, aliquota: DecimalTexto, deduzir: DecimalTexto, cbs: DecimalTexto, ibs: DecimalTexto, municipalEstadual: DecimalTexto })
+                    .strict(),
+                )
+                .min(1),
+            })
+            .strict(),
+        ),
+      )
+      .optional(),
   })
   .strict();
 
