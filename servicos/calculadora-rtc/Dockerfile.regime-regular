@@ -1,0 +1,28 @@
+# Calculadora oficial da Reforma Tributária do Consumo (CBS, IBS e IS) da Receita Federal,
+# regime regular. Código MIT em github.com/ReceitaFederal/calculadora-rtc-regime-regular,
+# fixado num commit para a imagem ser reproduzível. Serviço interno: sem domínio público.
+ARG COMMIT_REGULAR=150cccbe414d4a5edea703e4f7a424af5aa222c7
+
+FROM alpine/git:2.49.1 AS fonte
+ARG COMMIT_REGULAR
+RUN git clone https://github.com/ReceitaFederal/calculadora-rtc-regime-regular /src \
+ && git -C /src checkout --quiet "$COMMIT_REGULAR"
+
+# Banco SQLite oficial, montado com os scripts do próprio repositório na ordem do Flyway.
+FROM python:3.12-slim AS banco
+COPY --from=fonte /src/flyway/sql /sql
+COPY servicos/calculadora-rtc/montar_banco.py /montar_banco.py
+RUN python -I /montar_banco.py /sql /calculadora-pro.db
+
+FROM maven:3.9-eclipse-temurin-21 AS build
+COPY --from=fonte /src /src
+WORKDIR /src
+RUN mvn -q -B -DskipTests package
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /src/target/api-regime-geral.jar /app/app.jar
+COPY --from=banco /calculadora-pro.db /app/calculadora/db/calculadora-pro.db
+ENV SPRING_PROFILES_ACTIVE=offline SERVER_PORT=8080 TZ=America/Sao_Paulo
+EXPOSE 8080
+CMD ["java", "-XX:MaxRAMPercentage=70", "-jar", "/app/app.jar"]

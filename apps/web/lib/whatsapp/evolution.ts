@@ -133,6 +133,31 @@ export async function enviarTexto(
   }
 }
 
+/** Envia um PDF como documento pela instância configurada. */
+export async function enviarPdf(
+  config: ConfiguracaoEvolution,
+  destino: string,
+  pdf: Buffer,
+  nome: string,
+  legenda: string,
+  buscar: typeof fetch = fetch,
+): Promise<void> {
+  const resposta = await buscar(`${config.url}/message/sendMedia/${encodeURIComponent(config.instancia)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: config.chave },
+    body: JSON.stringify({
+      number: destino,
+      mediatype: "document",
+      mimetype: "application/pdf",
+      fileName: nome,
+      caption: legenda,
+      media: pdf.toString("base64"),
+    }),
+    signal: AbortSignal.timeout(30_000),
+  });
+  if (!resposta.ok) throw new Error(`Evolution respondeu ${resposta.status} ao enviar o PDF.`);
+}
+
 /** Compara o segredo sem vazar o tamanho do acerto pelo tempo de resposta. */
 export function segredoConfere(esperado: string, recebido: string | null): boolean {
   if (!recebido || recebido.length !== esperado.length) return false;

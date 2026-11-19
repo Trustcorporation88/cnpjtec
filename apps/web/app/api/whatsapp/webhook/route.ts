@@ -2,6 +2,8 @@ import { NotaInvalida } from "@/lib/cofre/nfe";
 import { configuracaoDaConta } from "@/lib/conta/servidor";
 import { depsDoCaderno, telefoneDaConta } from "@/lib/conta/whatsapp";
 import { criarLimite } from "@/lib/radar";
+import { configuracaoDanfse, ehXmlDeNfse, gerarDanfse, XmlNaoEhNfse } from "@/lib/danfse";
+import { pedidoDeCodigos, textoDosCodigos } from "@/lib/whatsapp/codigos";
 import { tratarCaderno, tratarNotaRecebida, type RespostaDoCaderno } from "@/lib/whatsapp/caderno";
 import {
   anoEmSaoPaulo,
@@ -18,6 +20,7 @@ import {
   baixarArquivo,
   ehXml,
   configuracaoEvolution,
+  enviarPdf,
   enviarTexto,
   lerEvento,
   segredoConfere,
@@ -133,10 +136,30 @@ export async function POST(request: Request): Promise<Response> {
   };
 
   if (mensagem.documento) {
+    const danfse = configuracaoDanfse();
+    if (danfse && ehXml(mensagem.documento)) {
+      try {
+        const xml = (await baixarArquivo(config, mensagem.id)).toString("utf8");
+        if (ehXmlDeNfse(xml)) {
+          const pdf = await gerarDanfse(danfse, xml);
+          await enviarPdf(config, mensagem.destino, pdf, "nota-de-servico.pdf", "PDF da sua nota de serviço (DANFSe), gerado pelo programa oficial da Receita.");
+          return Response.json({ ok: true, tratou: true });
+        }
+      } catch (erro) {
+        if (erro instanceof XmlNaoEhNfse) {
+          return responderCaderno({ estado: anterior ?? { etapa: "menu", atividades: [] }, mensagens: [`Não consegui gerar o PDF: ${erro.message}`] });
+        }
+        console.error("whatsapp: danfse", erro instanceof Error ? erro.message : erro);
+        return responderCaderno({
+          estado: anterior ?? { etapa: "menu", atividades: [] },
+          mensagens: [`Não consegui gerar o PDF agora. Tente de novo daqui a pouco ou pelo site: ${site}/nota-de-servico`],
+        });
+      }
+    }
     if (!conta || !ehXml(mensagem.documento)) {
       return responderCaderno({
         estado: anterior ?? { etapa: "menu", atividades: [] },
-        mensagens: ["Por enquanto eu só leio o arquivo XML da nota de compra. Foto e PDF ainda não. Mande 0 para ver o menu."],
+        mensagens: ["Por enquanto eu leio só arquivo XML: o da nota de compra (guardo no cofre) e o da nota de serviço (devolvo o PDF). Foto e PDF ainda não. Mande 0 para ver o menu."],
       });
     }
     try {
@@ -150,6 +173,11 @@ export async function POST(request: Request): Promise<Response> {
       if (!(erro instanceof NotaInvalida)) console.error("whatsapp: nota", erro instanceof Error ? erro.message : erro);
       return responderCaderno({ estado: anterior ?? { etapa: "menu", atividades: [] }, mensagens: [texto] });
     }
+  }
+
+  const busca = pedidoDeCodigos(mensagem.texto);
+  if (busca) {
+    return responderCaderno({ estado: anterior ?? { etapa: "menu", atividades: [] }, mensagens: [textoDosCodigos(busca, site)] });
   }
 
   if (conta) {
