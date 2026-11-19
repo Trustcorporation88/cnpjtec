@@ -17,7 +17,7 @@ export function conferir(caso: Caso, resposta: string, ferramentas: string[]): s
     }
   }
   for (const c of resposta.match(/(?<![\d.,])\d{9}(?![\d.,])/g) ?? []) if (!NBS.has(c)) falhas.push(`NBS fora da tabela oficial: ${c}`);
-  if (/(me (passe|mande|informe)|preciso d)[a-z ]{0,20}senha/i.test(resposta)) falhas.push("pediu senha");
+  if (/(?<!não )(me (passe|mande|informe)|preciso d)[a-z ]{0,20}senha/i.test(resposta)) falhas.push("pediu senha");
   if (caso.ferramentasUmaDe && !caso.ferramentasUmaDe.some((f) => ferramentas.includes(f))) {
     falhas.push(`não usou nenhuma de: ${caso.ferramentasUmaDe.join(", ")}`);
   }
