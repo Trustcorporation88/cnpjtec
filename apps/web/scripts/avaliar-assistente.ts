@@ -30,7 +30,7 @@ for (const caso of casos) {
   }
   const falhas = resposta.startsWith("ERRO:") ? [resposta] : conferir(caso, resposta, ferramentas);
   if (falhas.length === 0) passou++;
-  linhas.push(`${falhas.length === 0 ? "ok  " : "FALHA"} ${caso.id} [${ferramentas.join(", ") || "sem ferramenta"}]${falhas.length ? `\n      ${falhas.join("\n      ")}` : ""}`);
+  linhas.push(`${falhas.length === 0 ? "ok  " : "FALHA"} ${caso.id} [${ferramentas.join(", ") || "sem ferramenta"}]${falhas.length ? `\n      ${falhas.join("\n      ")}\n      resposta: ${resposta.replace(/\s+/g, " ").slice(0, 400)}` : ""}`);
   console.log(linhas.at(-1));
 }
 
