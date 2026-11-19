@@ -2,6 +2,7 @@ import { NotaInvalida } from "@/lib/cofre/nfe";
 import { configuracaoDaConta } from "@/lib/conta/servidor";
 import { depsDoCaderno, telefoneDaConta } from "@/lib/conta/whatsapp";
 import { criarLimite } from "@/lib/radar";
+import { pedidoDeCodigos, textoDosCodigos } from "@/lib/whatsapp/codigos";
 import { tratarCaderno, tratarNotaRecebida, type RespostaDoCaderno } from "@/lib/whatsapp/caderno";
 import {
   anoEmSaoPaulo,
@@ -150,6 +151,11 @@ export async function POST(request: Request): Promise<Response> {
       if (!(erro instanceof NotaInvalida)) console.error("whatsapp: nota", erro instanceof Error ? erro.message : erro);
       return responderCaderno({ estado: anterior ?? { etapa: "menu", atividades: [] }, mensagens: [texto] });
     }
+  }
+
+  const busca = pedidoDeCodigos(mensagem.texto);
+  if (busca) {
+    return responderCaderno({ estado: anterior ?? { etapa: "menu", atividades: [] }, mensagens: [textoDosCodigos(busca, site)] });
   }
 
   if (conta) {

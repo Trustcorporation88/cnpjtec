@@ -1120,3 +1120,102 @@ li[data-estoura="true"][data-estimado="true"] .enchimento {
     display: none;
   }
 }
+
+/* Códigos da nota de serviço */
+
+.resultados-servico {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resultado-servico {
+  border-top: 1px solid #c9cfcc;
+}
+
+.titulo-resultado {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  padding: 1rem 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.titulo-resultado[aria-expanded="true"] strong {
+  text-decoration: underline;
+  text-decoration-color: var(--marca-bronze);
+  text-decoration-thickness: 3px;
+}
+
+.detalhe-resultado {
+  padding: 0 0 1.5rem;
+}
+
+.detalhe-resultado h3 {
+  margin: 1.5rem 0 0.25rem;
+  font-size: 1.05rem;
+}
+
+.codigos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  margin: 0.5rem 0;
+}
+
+.codigo dt {
+  color: var(--apoio);
+  font-size: 0.85rem;
+}
+
+.codigo dd {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0.1rem 0 0;
+}
+
+.codigo code {
+  font-family: var(--placa);
+  font-size: 1.5rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.lista-simples {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-simples > li + li {
+  margin-top: 0.75rem;
+}
+
+.campo-busca {
+  display: grid;
+  gap: 0.4rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.campo-busca > span:first-child {
+  font-weight: 700;
+}
+
+.campo-busca input {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.6rem 0.9rem;
+  border: 2px solid var(--tinta);
+  border-radius: 0.4rem;
+  background: var(--papel);
+  color: var(--tinta);
+  font: inherit;
+  font-size: 1.15rem;
+}

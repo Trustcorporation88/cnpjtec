@@ -1,3 +1,4 @@
+import { AJUDA_CODIGOS } from "./codigos";
 import { cnpjValido, configuracaoDas } from "../das/procontador";
 import { comandoDoCaderno, type Pendente } from "./caderno";
 import { lerValor, mostrarValor } from "../dinheiro";
@@ -80,6 +81,7 @@ function menu(comIa = process.env.ANTHROPIC_API_KEY ? true : false): string {
     "2. Boleto do DAS (guia mensal do MEI)",
     "3. Entender o CNPJ técnico",
     "4. Anotar vendas e ver o limite do MEI",
+    "5. Códigos da nota de serviço (IBS e CBS, 2027)",
     ...(comIa ? ["", "Ou escreva a sua dúvida do seu jeito."] : []),
     "",
     "Mande 0 a qualquer momento para voltar a este menu, ou sair para encerrar.",
@@ -222,6 +224,7 @@ export function responder(anterior: Estado | undefined, recebido: string): Respo
 
   switch (estado.etapa) {
     case "menu": {
+      if (texto === "5") return { estado, mensagens: [AJUDA_CODIGOS] };
       if (texto === "1") {
         return { estado: { etapa: "vinculo", atividades: [] }, mensagens: [PERGUNTA_VINCULO] };
       }

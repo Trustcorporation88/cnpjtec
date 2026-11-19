@@ -43,6 +43,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             <Link href="/das">Guia do MEI</Link>
             <Link href="/cnpj-tecnico">CNPJ técnico</Link>
             <Link href="/cadesp">Inscrição estadual</Link>
+            <Link href="/nota-de-servico">Códigos da nota</Link>
             <Link href="/cofre">Cofre de notas</Link>
             <Link href="/abrir-mei">Abrir MEI</Link>
             <Link href="/assistente">Perguntar</Link>

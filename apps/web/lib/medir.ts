@@ -8,7 +8,8 @@ export type Evento =
   | "duvida_enviada"
   | "das_consultado"
   | "declaracao_impressa"
-  | "conta_criada";
+  | "conta_criada"
+  | "codigos_consultados";
 
 export const CHAVE_DO_ACEITE = "procontador.medicao.v1";
 
