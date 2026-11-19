@@ -7,8 +7,13 @@ import { CASOS } from "../lib/ia/avaliacao/casos";
 import { conferir } from "../lib/ia/avaliacao/conferir";
 import { conversar } from "../lib/ia/assistente";
 
-const filtro = process.env.CASOS?.split(",").map((s) => s.trim());
-const casos = filtro ? CASOS.filter((c) => filtro.includes(c.id)) : CASOS;
+// CASOS vazio (o agendamento semanal manda "") significa a bateria inteira.
+const filtro = (process.env.CASOS ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+const casos = filtro.length ? CASOS.filter((c) => filtro.includes(c.id)) : CASOS;
+if (casos.length === 0) {
+  console.error(`Nenhum caso com esses nomes: ${filtro.join(", ")}`);
+  process.exit(1);
+}
 const linhas: string[] = [];
 let passou = 0;
 
