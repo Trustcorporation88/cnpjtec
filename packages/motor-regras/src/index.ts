@@ -8,3 +8,5 @@ export { simularRegimes } from "./simulador";
 export type { EntradaDoSimulador, ResultadoDoSimulador } from "./simulador";
 export { anoDaDeclaracao, prepararDeclaracao } from "./declaracao";
 export type { Declaracao, EntradaDaDeclaracao, FaixaDoLimite, SituacaoDaDeclaracao } from "./declaracao";
+export { simularSaidaDoMei } from "./saida-mei";
+export type { EntradaDaSaidaDoMei, ParteDoSimples, SaidaDoMei } from "./saida-mei";

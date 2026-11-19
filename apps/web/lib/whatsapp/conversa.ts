@@ -82,6 +82,7 @@ function menu(comIa = process.env.ANTHROPIC_API_KEY ? true : false): string {
     "3. Entender o CNPJ técnico",
     "4. Anotar vendas e ver o limite do MEI",
     "5. Códigos da nota de serviço (IBS e CBS, 2027)",
+    "6. Receber lembretes (DAS, declaração e limite)",
     ...(comIa ? ["", "Ou escreva a sua dúvida do seu jeito."] : []),
     "",
     "Mande 0 a qualquer momento para voltar a este menu, ou sair para encerrar.",

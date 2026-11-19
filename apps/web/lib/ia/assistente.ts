@@ -1,6 +1,6 @@
 import { buscarServicos, tabelaDeServicos } from "@cnpjtec/regras/servicos";
 import { modeloPara } from "@cnpjtec/agente";
-import { receitaAnualDeMedia, simularRegimes } from "@cnpjtec/motor-regras";
+import { receitaAnualDeMedia, simularRegimes, simularSaidaDoMei } from "@cnpjtec/motor-regras";
 import { baseDeRegras, regrasIncertas } from "@cnpjtec/regras";
 import { z } from "zod";
 import { ANO_AVALIADO, diagnosticar, Respostas, TIPOS_DE_ATIVIDADE } from "../respostas";
@@ -36,7 +36,7 @@ Regras que você nunca quebra:
 
 Para diagnosticar você precisa: se a pessoa trabalha por conta própria ou só tem emprego, se já tem MEI, cada tipo de atividade com a média mensal bruta, o estado (UF) e, se revende mercadoria, se tem inscrição estadual. Pergunte o que faltar, uma ou duas coisas por vez.
 
-Páginas do site que você pode indicar (só o caminho): /das (guia do MEI), /abrir-mei, /cnpj-tecnico, /cadesp, /caderno (anotar vendas), /declaracao (declaração anual do MEI), /nota-de-servico (códigos da nota de serviço), /cofre (guardar notas de compra), /limite, /simulador, /ajuda (falar com um contador).
+Páginas do site que você pode indicar (só o caminho): /das (guia do MEI), /abrir-mei, /cnpj-tecnico, /cadesp, /caderno (anotar vendas), /declaracao (declaração anual do MEI), /nota-de-servico (códigos da nota de serviço), /sair-do-mei (custo de virar ME no Simples), /cofre (guardar notas de compra), /limite, /simulador, /ajuda (falar com um contador).
 
 Encaminhamentos: dúvidas de pagamento, crédito ou regras da parceria com a Natura vão para a Natura ou para a Emana Pay. Quem passou do limite do MEI precisa de um contador (/ajuda).
 
@@ -82,11 +82,26 @@ export const FERRAMENTAS = [
   },
   {
     name: "buscar_regra",
-    description: "Devolve texto, fonte, vigência e status de uma regra pelo identificador (R01 a R39).",
+    description: "Devolve texto, fonte, vigência e status de uma regra pelo identificador (R01 a R42).",
     input_schema: {
       type: "object",
       properties: { id: { type: "string", pattern: "^R\\d{2}$" } },
       required: ["id"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "simular_saida_do_mei",
+    description:
+      "Compara a guia do MEI com a guia de ME no Simples Nacional (2027 ou 2028) para quem passou ou vai passar do limite do MEI, com a parte de CBS e IBS. Valores mensais médios em reais, com ponto decimal.",
+    input_schema: {
+      type: "object",
+      properties: {
+        ano: { type: "integer", enum: [2027, 2028] },
+        comercioMensal: { type: "string", pattern: "^\\d{1,9}(\\.\\d{1,2})?$" },
+        servicoMensal: { type: "string", pattern: "^\\d{1,9}(\\.\\d{1,2})?$" },
+      },
+      required: ["ano", "comercioMensal", "servicoMensal"],
       additionalProperties: false,
     },
   },
@@ -147,6 +162,16 @@ export function executarFerramenta(nome: string, entrada: unknown): string {
       const regra = baseDeRegras.regras.find((x) => x.id === id);
       return JSON.stringify(regra ?? { erro: `Regra ${id} não existe.` });
     }
+    if (nome === "simular_saida_do_mei") {
+      const e = entrada as { ano?: number; comercioMensal?: string; servicoMensal?: string };
+      return JSON.stringify({
+        ...simularSaidaDoMei(
+          { anoCalendario: Number(e.ano), comercioMensal: String(e.comercioMensal ?? "0"), servicoMensal: String(e.servicoMensal ?? "0") },
+          baseDeRegras.parametros,
+        ),
+        pagina: "/sair-do-mei",
+      });
+    }
     if (nome === "codigos_da_nota") {
       const servico = String((entrada as { servico?: unknown })?.servico ?? "").slice(0, 120);
       return JSON.stringify({
@@ -185,7 +210,13 @@ export function minimizar(texto: string): string {
 /** Conversa com a IA, deixando ela chamar as ferramentas do motor até 5 vezes. */
 export async function conversar(
   historico: Mensagem[],
-  opcoes: { canal: "site" | "whatsapp"; buscar?: typeof fetch; env?: Record<string, string | undefined> } = { canal: "site" },
+  opcoes: {
+    canal: "site" | "whatsapp";
+    buscar?: typeof fetch;
+    env?: Record<string, string | undefined>;
+    /** Avisa cada ferramenta usada (para a bateria de avaliação). */
+    aoUsarFerramenta?: (nome: string, entrada: unknown) => void;
+  } = { canal: "site" },
 ): Promise<string> {
   const env = opcoes.env ?? process.env;
   const chave = env.ANTHROPIC_API_KEY?.trim();
@@ -228,7 +259,10 @@ export async function conversar(
     mensagens.push({ role: "assistant", content: corpo.content });
     mensagens.push({
       role: "user",
-      content: usos.map((u) => ({ type: "tool_result", tool_use_id: u.id, content: executarFerramenta(u.name ?? "", u.input) })),
+      content: usos.map((u) => {
+        opcoes.aoUsarFerramenta?.(u.name ?? "", u.input);
+        return { type: "tool_result", tool_use_id: u.id, content: executarFerramenta(u.name ?? "", u.input) };
+      }),
     });
   }
   return "Essa pergunta ficou complicada para mim. Fale com um contador em /ajuda.";

@@ -64,7 +64,7 @@ export function textoDaDeclaracao(d: Declaracao, site: string): string {
     );
   }
   const limite = fraseDoLimite(d);
-  if (limite) linhas.push("", `*Atenção:* ${limite} ${site}/ajuda`);
+  if (limite) linhas.push("", `*Atenção:* ${limite} ${site}/ajuda`, `Quanto fica a guia como ME: ${site}/sair-do-mei`);
   const meses = fraseDosMeses(d);
   if (meses) linhas.push("", meses);
   if (d.vendasParaEmpresa > 0) {

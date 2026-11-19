@@ -46,6 +46,21 @@ export interface ParametrosDoMotor {
   fracaoInssMei: { valor: DecimalTexto; regra: string };
   icmsMei: { valor: DecimalTexto; regra: string };
   issMei: { valor: DecimalTexto; regra: string };
+  simplesNacional?: Record<string, Partial<Record<"I" | "III", TabelaDoSimples>>> | undefined;
+}
+
+export interface FaixaDoSimples {
+  ate: DecimalTexto;
+  aliquota: DecimalTexto;
+  deduzir: DecimalTexto;
+  cbs: DecimalTexto;
+  ibs: DecimalTexto;
+  municipalEstadual: DecimalTexto;
+}
+
+export interface TabelaDoSimples {
+  regra: string;
+  faixas: FaixaDoSimples[];
 }
 
 export type CodigoAlerta =

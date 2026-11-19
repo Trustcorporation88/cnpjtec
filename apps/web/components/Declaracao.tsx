@@ -147,7 +147,8 @@ export function Declaracao() {
               <ul className="lista alerta">
                 {limite && (
                   <li>
-                    {limite} <Link href="/ajuda">Falar com um contador</Link>.{" "}
+                    {limite} <Link href="/sair-do-mei">Ver quanto fica a guia como ME</Link> e{" "}
+                    <Link href="/ajuda">falar com um contador</Link>.{" "}
                     <a className="ref" href="#regra-R38">(regra R38)</a>
                   </li>
                 )}

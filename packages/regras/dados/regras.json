@@ -1,6 +1,6 @@
 {
-  "versao": "0.6.0",
-  "atualizadoEm": "2026-11-16",
+  "versao": "0.7.0",
+  "atualizadoEm": "2026-11-19",
   "parametros": {
     "limiteMeiAnual": {
       "2026": {
@@ -41,6 +41,160 @@
     "issMei": {
       "valor": "5.00",
       "regra": "R35"
+    },
+    "simplesNacional": {
+      "2027": {
+        "I": {
+          "regra": "R40",
+          "faixas": [
+            {
+              "ate": "180000.00",
+              "aliquota": "0.0400",
+              "deduzir": "0.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3400"
+            },
+            {
+              "ate": "360000.00",
+              "aliquota": "0.0730",
+              "deduzir": "5940.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3400"
+            },
+            {
+              "ate": "720000.00",
+              "aliquota": "0.0950",
+              "deduzir": "13860.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3350"
+            },
+            {
+              "ate": "1800000.00",
+              "aliquota": "0.1070",
+              "deduzir": "22500.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3350"
+            }
+          ]
+        },
+        "III": {
+          "regra": "R41",
+          "faixas": [
+            {
+              "ate": "180000.00",
+              "aliquota": "0.0600",
+              "deduzir": "0.00",
+              "cbs": "0.1543",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3350"
+            },
+            {
+              "ate": "360000.00",
+              "aliquota": "0.1120",
+              "deduzir": "9360.00",
+              "cbs": "0.1691",
+              "ibs": "0.0019",
+              "municipalEstadual": "0.3200"
+            },
+            {
+              "ate": "720000.00",
+              "aliquota": "0.1350",
+              "deduzir": "17640.00",
+              "cbs": "0.1642",
+              "ibs": "0.0019",
+              "municipalEstadual": "0.3250"
+            },
+            {
+              "ate": "1800000.00",
+              "aliquota": "0.1600",
+              "deduzir": "35640.00",
+              "cbs": "0.1642",
+              "ibs": "0.0019",
+              "municipalEstadual": "0.3250"
+            }
+          ]
+        }
+      },
+      "2028": {
+        "I": {
+          "regra": "R40",
+          "faixas": [
+            {
+              "ate": "180000.00",
+              "aliquota": "0.0400",
+              "deduzir": "0.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3400"
+            },
+            {
+              "ate": "360000.00",
+              "aliquota": "0.0730",
+              "deduzir": "5940.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3400"
+            },
+            {
+              "ate": "720000.00",
+              "aliquota": "0.0950",
+              "deduzir": "13860.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3350"
+            },
+            {
+              "ate": "1800000.00",
+              "aliquota": "0.1070",
+              "deduzir": "22500.00",
+              "cbs": "0.1533",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3350"
+            }
+          ]
+        },
+        "III": {
+          "regra": "R41",
+          "faixas": [
+            {
+              "ate": "180000.00",
+              "aliquota": "0.0600",
+              "deduzir": "0.00",
+              "cbs": "0.1543",
+              "ibs": "0.0017",
+              "municipalEstadual": "0.3350"
+            },
+            {
+              "ate": "360000.00",
+              "aliquota": "0.1120",
+              "deduzir": "9360.00",
+              "cbs": "0.1691",
+              "ibs": "0.0019",
+              "municipalEstadual": "0.3200"
+            },
+            {
+              "ate": "720000.00",
+              "aliquota": "0.1350",
+              "deduzir": "17640.00",
+              "cbs": "0.1642",
+              "ibs": "0.0019",
+              "municipalEstadual": "0.3250"
+            },
+            {
+              "ate": "1800000.00",
+              "aliquota": "0.1600",
+              "deduzir": "35640.00",
+              "cbs": "0.1642",
+              "ibs": "0.0019",
+              "municipalEstadual": "0.3250"
+            }
+          ]
+        }
+      }
     }
   },
   "regras": [
@@ -540,6 +694,44 @@
       "status": "EM_VIGOR",
       "conferencia": "OFICIAL",
       "observacao": "O boleto da multa sai junto com o recibo de entrega."
+    },
+    {
+      "id": "R40",
+      "trilhas": [
+        "E"
+      ],
+      "regra": "Em 2027 e 2028, a ME ou EPP do Simples Nacional que vende mercadoria usa o Anexo I: até R$ 180 mil de receita bruta em 12 meses, alíquota de 4%; de R$ 180 mil a R$ 360 mil, 7,30% com R$ 5.940 a deduzir; de R$ 360 mil a R$ 720 mil, 9,50% com R$ 13.860; até R$ 1,8 milhão, 10,70% com R$ 22.500. Da guia, 15,33% é CBS e 0,17% é IBS.",
+      "vigenciaInicio": "2027-01-01",
+      "vigenciaFim": "2028-12-31",
+      "fonte": "LC 214/2025, Anexo XVIII (novo Anexo I da LC 123/2006), texto compilado no portal de legislação do Senado",
+      "status": "EFEITO_FUTURO",
+      "conferencia": "OFICIAL",
+      "observacao": "Faixas 5 e 6 não usadas pelo ProContador (acima de R$ 1,8 milhão)."
+    },
+    {
+      "id": "R41",
+      "trilhas": [
+        "E"
+      ],
+      "regra": "Em 2027 e 2028, a ME ou EPP do Simples Nacional que presta serviço do Anexo III usa: até R$ 180 mil de receita bruta em 12 meses, alíquota de 6%; de R$ 180 mil a R$ 360 mil, 11,20% com R$ 9.360 a deduzir; de R$ 360 mil a R$ 720 mil, 13,50% com R$ 17.640; até R$ 1,8 milhão, 16% com R$ 35.640. Da guia, a CBS fica entre 15,43% e 16,91% e o IBS entre 0,17% e 0,19%, conforme a faixa.",
+      "vigenciaInicio": "2027-01-01",
+      "vigenciaFim": "2028-12-31",
+      "fonte": "LC 214/2025, Anexo XX (novo Anexo III da LC 123/2006), texto compilado no portal de legislação do Senado",
+      "status": "EFEITO_FUTURO",
+      "conferencia": "OFICIAL",
+      "observacao": "Atividades sujeitas ao fator R podem ir para o Anexo V; isso exige análise de contador."
+    },
+    {
+      "id": "R42",
+      "trilhas": [
+        "E"
+      ],
+      "regra": "No Simples Nacional, a alíquota efetiva é (receita bruta dos últimos 12 meses x alíquota nominal da faixa, menos a parcela a deduzir), dividido pela receita bruta dos últimos 12 meses. A faixa é a da receita total da empresa, e a alíquota efetiva vale para cada tipo de receita no seu anexo.",
+      "vigenciaInicio": null,
+      "vigenciaFim": null,
+      "fonte": "LC 123/2006, art. 18, § 1º-A; Manual do PGDAS-D da Receita Federal",
+      "status": "EM_VIGOR",
+      "conferencia": "OFICIAL"
     }
   ]
 }

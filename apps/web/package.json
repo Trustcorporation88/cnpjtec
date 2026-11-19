@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "avaliar": "tsx scripts/avaliar-assistente.ts"
   },
   "dependencies": {
     "@cnpjtec/agente": "workspace:*",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.23.15"
   }
 }

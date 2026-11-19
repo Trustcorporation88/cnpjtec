@@ -8,7 +8,7 @@ import { lerEvento } from "./evolution";
 const TEL = "+5514998370223";
 
 function depsFalsas(inicial: { conta?: boolean; vendas?: Venda[] } = {}) {
-  const estado = { conta: inicial.conta ?? false, vendas: [...(inicial.vendas ?? [])], notas: 0 };
+  const estado = { conta: inicial.conta ?? false, vendas: [...(inicial.vendas ?? [])], notas: 0, lembretes: false };
   let n = 0;
   const deps: DepsCaderno = {
     temConta: async () => estado.conta,
@@ -26,6 +26,16 @@ function depsFalsas(inicial: { conta?: boolean; vendas?: Venda[] } = {}) {
     guardarNota: async () => {
       estado.notas++;
       return { emitente: "Natura", numero: "123", valor: "250.00" };
+    },
+    ligarLembretes: async () => {
+      if (!estado.conta) return false;
+      estado.lembretes = true;
+      return true;
+    },
+    desligarLembretes: async () => {
+      const estava = estado.lembretes;
+      estado.lembretes = false;
+      return estava;
     },
     agora: () => new Date("2026-11-16T15:00:00Z"),
     site: "https://site",
@@ -211,5 +221,34 @@ describe("declaração anual pelo WhatsApp", () => {
     expect(r!.mensagens.join("\n")).toContain("mais de 20%");
     const r2 = await tratarCaderno(undefined, "declaração 2024", TEL, deps);
     expect(r2!.mensagens.join("\n")).toContain("Consigo montar a declaração destes anos: 2026");
+  });
+});
+
+describe("lembretes pelo WhatsApp", () => {
+  it("pede consentimento antes de criar a conta e liga os lembretes", async () => {
+    const { deps, estado } = depsFalsas();
+    const r = await tratarCaderno({ etapa: "menu", atividades: [] }, "quero lembretes", TEL, deps);
+    expect(r!.estado.etapa).toBe("consentir_conta");
+    expect(estado.conta).toBe(false);
+    const r2 = await tratarCaderno(r!.estado, "1", TEL, deps);
+    expect(estado.conta).toBe(true);
+    expect(estado.lembretes).toBe(true);
+    expect(r2!.mensagens.join("\n")).toContain("Lembretes ligados");
+  });
+
+  it("liga pela opção 6 do menu e desliga com parar lembretes", async () => {
+    const { deps, estado } = depsFalsas({ conta: true });
+    await tratarCaderno({ etapa: "menu", atividades: [] }, "6", TEL, deps);
+    expect(estado.lembretes).toBe(true);
+    const r = await tratarCaderno(undefined, "parar lembretes", TEL, deps);
+    expect(estado.lembretes).toBe(false);
+    expect(r!.mensagens[0]).toContain("parei");
+  });
+
+  it("recusar não cria conta", async () => {
+    const { deps, estado } = depsFalsas();
+    const r = await tratarCaderno(undefined, "lembretes", TEL, deps);
+    await tratarCaderno(r!.estado, "2", TEL, deps);
+    expect(estado.conta).toBe(false);
   });
 });

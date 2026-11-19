@@ -2,6 +2,7 @@ import { anoDaDeclaracao, ParametroAusente, PerfilInvalido, prepararDeclaracao, 
 import { baseDeRegras } from "@cnpjtec/regras";
 import { medirCaderno } from "../caderno-limite";
 import { textoDaDeclaracao } from "../declaracao";
+import { comandoDeLembretes, TEXTO_LEMBRETES_LIGADOS } from "../lembretes";
 import { lerValor, mostrarValor } from "../dinheiro";
 import type { Estado } from "./conversa";
 import { limpar } from "./conversa";
@@ -16,7 +17,7 @@ export interface VendaNova extends Venda {
   descricao: string;
 }
 
-export type Pendente = { tipo: "venda"; venda: VendaNova } | { tipo: "nota"; xml: string };
+export type Pendente = { tipo: "venda"; venda: VendaNova } | { tipo: "nota"; xml: string } | { tipo: "lembretes" };
 
 export type Comando =
   | { tipo: "venda"; valor: string; tipoDeVenda: "mercadoria" | "servico"; compradorTemCnpj: boolean; descricao: string }
@@ -33,6 +34,10 @@ export interface DepsCaderno {
   desfazer(telefone: string): Promise<{ data: string; valor: string; tipo: string } | null>;
   /** Lê e guarda a nota; devolve o resumo para a resposta. */
   guardarNota(telefone: string, xml: string): Promise<{ emitente: string; numero: string | null; valor: string | null }>;
+  /** Liga os lembretes da conta; falso se não houver conta. */
+  ligarLembretes(telefone: string): Promise<boolean>;
+  /** Desliga os lembretes; falso se não estavam ligados. */
+  desligarLembretes(telefone: string): Promise<boolean>;
   agora(): Date;
   site: string;
   consentimento: string;
@@ -182,7 +187,12 @@ export async function tratarCaderno(
       if (!telefone) return { estado: menu, mensagens: ["Não consegui identificar o seu número. Use o site para criar a conta."] };
       await deps.criarConta(telefone);
       const p = anterior.pendente;
-      const texto = p.tipo === "venda" ? await anotar(telefone, p.venda, deps) : await guardar(telefone, p.xml, deps);
+      const texto =
+        p.tipo === "venda"
+          ? await anotar(telefone, p.venda, deps)
+          : p.tipo === "nota"
+            ? await guardar(telefone, p.xml, deps)
+            : (await deps.ligarLembretes(telefone), TEXTO_LEMBRETES_LIGADOS);
       return { estado: menu, mensagens: [`Conta criada. Você também pode entrar no site com este número: ${deps.site}/entrar`, texto] };
     }
     if (t === "2" || t === "nao") return { estado: menu, mensagens: ["Tudo bem, não guardei nada. Mande 0 para ver o menu."] };
@@ -190,6 +200,32 @@ export async function tratarCaderno(
   }
 
   if (anterior?.etapa === "menu" && limpar(recebido) === "4") return { estado: menu, mensagens: [AJUDA_CADERNO] };
+
+  const lembrete = comandoDeLembretes(limpar(recebido)) ?? (anterior?.etapa === "menu" && limpar(recebido) === "6" ? "ligar" : null);
+  if (lembrete) {
+    if (!telefone) return { estado: menu, mensagens: ["Não consegui identificar o seu número para mandar os lembretes."] };
+    const temConta = await deps.temConta(telefone);
+    if (lembrete === "desligar") {
+      const estava = temConta && (await deps.desligarLembretes(telefone));
+      return { estado: menu, mensagens: [estava ? "Pronto, parei os lembretes. Para voltar, mande *lembretes*." : "Os lembretes já estavam desligados."] };
+    }
+    if (!temConta) {
+      return {
+        estado: { etapa: "consentir_conta", atividades: [], pendente: { tipo: "lembretes" } },
+        mensagens: [
+          [
+            "Para mandar lembretes do DAS, da declaração anual e do limite do MEI, eu crio uma conta no ProContador ligada a este WhatsApp.",
+            deps.consentimento,
+            "",
+            "1. Sim, pode criar",
+            "2. Não, obrigado",
+          ].join("\n"),
+        ],
+      };
+    }
+    await deps.ligarLembretes(telefone);
+    return { estado: menu, mensagens: [TEXTO_LEMBRETES_LIGADOS] };
+  }
 
   const comando = comandoDoCaderno(recebido);
   if (!comando) return null;
