@@ -1,0 +1,9 @@
+# Imagem montada pelo workflow base-rtc com o pacote oficial publicado pela Receita
+# (aplicação e banco da versão online). O workflow copia app.jar e calculadora-pro.db para o contexto.
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY app.jar /app/app.jar
+COPY calculadora-pro.db /app/calculadora/db/calculadora-pro.db
+ENV SPRING_PROFILES_ACTIVE=offline SERVER_PORT=8080 TZ=America/Sao_Paulo
+EXPOSE 8080
+CMD ["java", "-XX:MaxRAMPercentage=70", "-jar", "/app/app.jar"]
