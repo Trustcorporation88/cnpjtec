@@ -40,6 +40,7 @@ describe("tabela oficial de serviços da NFS-e", () => {
 
 describe("sincronia com os serviços oficiais", () => {
   it("a tabela foi gerada do mesmo commit que o serviço do regime regular usa", async () => {
+    if (tabelaDeServicos.commit.startsWith("pacote oficial")) return; // imagem e tabela saem do mesmo pacote no workflow base-rtc
     const { readFileSync } = await import("node:fs");
     const dockerfile = readFileSync(new URL("../../../servicos/calculadora-rtc/Dockerfile.regime-regular", import.meta.url), "utf8");
     expect(dockerfile).toContain(`COMMIT_REGULAR=${tabelaDeServicos.commit}`);

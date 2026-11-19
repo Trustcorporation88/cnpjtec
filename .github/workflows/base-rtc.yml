@@ -1,0 +1,117 @@
+name: base-rtc
+
+# Toda segunda, confere a versão da calculadora oficial da Receita (ambiente piloto online).
+# Quando ela muda, baixa o pacote oficial (aplicação e banco), monta as imagens dos serviços
+# internos e gera de novo a tabela de códigos da NFS-e, abrindo um PR com a atualização.
+
+on:
+  schedule:
+    - cron: "17 10 * * 1"
+  workflow_dispatch:
+    inputs:
+      forcar:
+        description: "Montar mesmo sem versão nova"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+env:
+  API: https://piloto-cbs.tributos.gov.br/servico/calculadora-consumo/api/calculadora
+
+jobs:
+  base:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Versão online e versão em uso
+        id: versao
+        run: |
+          curl -fsS "$API/dados-abertos/versao" -o versao.json
+          cat versao.json
+          online=$(jq -r .versaoDb versao.json)
+          app=$(jq -r .versaoApp versao.json)
+          atual=$(jq -r .versaoBase.versao packages/regras/dados/servicos-nfse.json)
+          echo "online=$online" >> "$GITHUB_OUTPUT"
+          echo "app=$app" >> "$GITHUB_OUTPUT"
+          echo "atual=$atual" >> "$GITHUB_OUTPUT"
+          if [ "$online" != "$atual" ] || [ "${{ inputs.forcar }}" = "true" ]; then echo "mudou=sim" >> "$GITHUB_OUTPUT"; fi
+          echo "Base online: $online (app $app). Base em uso: $atual."
+
+      - name: Baixar os pacotes oficiais
+        if: steps.versao.outputs.mudou == 'sim'
+        run: |
+          set -e
+          for p in jar jar-simples; do
+            url=$(curl -fsS "$API/download/url?platform=$p" | jq -r .downloadUrl)
+            echo "$p: $url"
+            curl -fsSL "$url" -o "$p.zip"
+            mkdir -p "pacote-$p" && unzip -q -o "$p.zip" -d "pacote-$p"
+            echo "Conteúdo de $p:"; find "pacote-$p" -maxdepth 4 -type f -printf '%s\t%p\n' | sort -k2
+          done
+
+      - name: Separar aplicação e banco
+        if: steps.versao.outputs.mudou == 'sim'
+        run: |
+          set -e
+          mkdir -p imagem/regime-regular imagem/simples-nacional
+          jar=$(find pacote-jar -name '*.jar' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          db=$(find pacote-jar -name '*.db' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          jars=$(find pacote-jar-simples -name '*.jar' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          dbs=$(find pacote-jar-simples -name '*.db' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          echo "regime regular: $jar + $db"; echo "simples: $jars + ${dbs:-$db}"
+          test -n "$jar" && test -n "$db" && test -n "$jars"
+          cp "$jar" imagem/regime-regular/app.jar && cp "$db" imagem/regime-regular/calculadora-pro.db
+          cp "$jars" imagem/simples-nacional/app.jar && cp "${dbs:-$db}" imagem/simples-nacional/calculadora-pro.db
+          python3 -c "import sqlite3,sys;c=sqlite3.connect('imagem/regime-regular/calculadora-pro.db');print(c.execute('select VRBD_VERSAO_BASE_DADO, VRBD_DATA from VERSAO_BASE_DADO order by 1 desc limit 1').fetchone())"
+
+      - uses: docker/setup-buildx-action@v3
+        if: steps.versao.outputs.mudou == 'sim'
+      - uses: docker/login-action@v3
+        if: steps.versao.outputs.mudou == 'sim'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Imagens com o pacote oficial
+        if: steps.versao.outputs.mudou == 'sim'
+        run: |
+          set -e
+          for s in regime-regular simples-nacional; do
+            cp servicos/calculadora-rtc/Dockerfile.oficial imagem/$s/Dockerfile
+            docker buildx build --platform linux/amd64 --push \
+              --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
+              --label org.opencontainers.image.version=${{ steps.versao.outputs.app }} \
+              -t ghcr.io/trustcorporation88/rtc-$s:latest \
+              -t ghcr.io/trustcorporation88/rtc-$s:${{ steps.versao.outputs.online }} \
+              imagem/$s
+          done
+
+      - name: Tabela de códigos da NFS-e
+        if: steps.versao.outputs.mudou == 'sim'
+        run: |
+          python3 -I servicos/calculadora-rtc/gerar_servicos_nfse.py imagem/regime-regular/calculadora-pro.db 2027-01-01 \
+            "pacote oficial ${{ steps.versao.outputs.app }}" packages/regras/dados/servicos-nfse.json
+
+      - name: Abrir PR
+        if: steps.versao.outputs.mudou == 'sim'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git diff --quiet packages/regras/dados/servicos-nfse.json && { echo "Tabela sem mudança."; exit 0; }
+          ramo="base-rtc-${{ steps.versao.outputs.online }}"
+          git config user.name "procontador-bot"
+          git config user.email "procontador-bot@users.noreply.github.com"
+          git checkout -b "$ramo"
+          git add packages/regras/dados/servicos-nfse.json
+          git commit -m "dados: tabela de códigos da NFS-e na base oficial ${{ steps.versao.outputs.online }}"
+          git push -f origin "$ramo"
+          gh pr create --base main --head "$ramo" \
+            --title "Base oficial da Receita ${{ steps.versao.outputs.online }} (app ${{ steps.versao.outputs.app }})" \
+            --body "Atualização automática: a calculadora online da Receita mudou de ${{ steps.versao.outputs.atual }} para ${{ steps.versao.outputs.online }}. As imagens dos serviços internos já foram publicadas com o pacote oficial; este PR atualiza a tabela de códigos da NFS-e." || true

@@ -7,7 +7,7 @@ name: imagens-rtc
 on:
   push:
     branches: [main]
-    paths: ["servicos/calculadora-rtc/**", ".github/workflows/imagens-rtc.yml"]
+    paths: ["servicos/calculadora-rtc/Dockerfile.regime-regular", "servicos/calculadora-rtc/Dockerfile.simples-nacional", "servicos/calculadora-rtc/Dockerfile.danfse", "servicos/calculadora-rtc/montar_banco.py"]
   workflow_dispatch:
 
 permissions:
@@ -36,8 +36,10 @@ jobs:
           file: servicos/calculadora-rtc/Dockerfile.${{ matrix.servico }}
           push: true
           platforms: linux/amd64
+          # O DANFSe só existe no código-fonte. As calculadoras usam, como "latest", o pacote oficial
+          # (workflow base-rtc); a versão do código-fonte fica na etiqueta "fonte".
           tags: |
-            ghcr.io/trustcorporation88/rtc-${{ matrix.servico }}:latest
+            ghcr.io/trustcorporation88/rtc-${{ matrix.servico }}:${{ matrix.servico == 'danfse' && 'latest' || 'fonte' }}
             ghcr.io/trustcorporation88/rtc-${{ matrix.servico }}:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
