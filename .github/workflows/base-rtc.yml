@@ -44,46 +44,60 @@ jobs:
           echo "Base online: $online (app $app). Base em uso: $atual."
 
       - name: Baixar os pacotes oficiais
+        id: pacote
         if: steps.versao.outputs.mudou == 'sim'
         run: |
-          set -e
-          for p in jar jar-simples; do
+          ok=sim
+          for p in default jar jar-simples; do
             url=$(curl -fsS "$API/download/url?platform=$p" | jq -r .downloadUrl)
-            echo "$p: $url"
-            curl -fsSL "$url" -o "$p.zip"
-            mkdir -p "pacote-$p" && unzip -q -o "$p.zip" -d "pacote-$p"
-            echo "Conteúdo de $p:"; find "pacote-$p" -maxdepth 4 -type f -printf '%s\t%p\n' | sort -k2
+            codigo=$(curl -sSL -o "$p.zip" -w '%{http_code}' "$url")
+            echo "$p: $url -> HTTP $codigo"
+            if [ "$codigo" = "200" ]; then
+              mkdir -p "pacote-$p" && unzip -q -o "$p.zip" -d "pacote-$p"
+              echo "Conteúdo de $p:"; find "pacote-$p" -maxdepth 4 -type f -printf '%s\t%p\n' | sort -k2
+            else
+              rm -f "$p.zip"
+            fi
           done
+          [ -d pacote-jar ] || [ -d pacote-default ] || ok=nao
+          echo "ok=$ok" >> "$GITHUB_OUTPUT"
+          if [ "$ok" = "nao" ]; then
+            echo "::warning::A Receita está com a base ${{ steps.versao.outputs.online }} online, mas o pacote para download não está disponível. A tabela continua na ${{ steps.versao.outputs.atual }}."
+            echo "### Base nova na Receita (${{ steps.versao.outputs.online }}), pacote indisponível" >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Separar aplicação e banco
-        if: steps.versao.outputs.mudou == 'sim'
+        if: steps.pacote.outputs.ok == 'sim'
         run: |
           set -e
           mkdir -p imagem/regime-regular imagem/simples-nacional
-          jar=$(find pacote-jar -name '*.jar' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
-          db=$(find pacote-jar -name '*.db' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
-          jars=$(find pacote-jar-simples -name '*.jar' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
-          dbs=$(find pacote-jar-simples -name '*.db' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          base=$( [ -d pacote-jar ] && echo pacote-jar || echo pacote-default )
+          jar=$(find $base -name '*.jar' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          db=$(find $base -name '*.db' -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          jars=$(find pacote-jar-simples -name '*.jar' 2>/dev/null -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+          dbs=$(find pacote-jar-simples -name '*.db' 2>/dev/null -printf '%s %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
           echo "regime regular: $jar + $db"; echo "simples: $jars + ${dbs:-$db}"
-          test -n "$jar" && test -n "$db" && test -n "$jars"
-          cp "$jar" imagem/regime-regular/app.jar && cp "$db" imagem/regime-regular/calculadora-pro.db
-          cp "$jars" imagem/simples-nacional/app.jar && cp "${dbs:-$db}" imagem/simples-nacional/calculadora-pro.db
+          test -n "$db"
+          cp "$db" imagem/regime-regular/calculadora-pro.db
+          if [ -n "$jar" ]; then cp "$jar" imagem/regime-regular/app.jar; fi
+          if [ -n "$jars" ]; then cp "$jars" imagem/simples-nacional/app.jar && cp "${dbs:-$db}" imagem/simples-nacional/calculadora-pro.db; fi
           python3 -c "import sqlite3,sys;c=sqlite3.connect('imagem/regime-regular/calculadora-pro.db');print(c.execute('select VRBD_VERSAO_BASE_DADO, VRBD_DATA from VERSAO_BASE_DADO order by 1 desc limit 1').fetchone())"
 
       - uses: docker/setup-buildx-action@v3
-        if: steps.versao.outputs.mudou == 'sim'
+        if: steps.pacote.outputs.ok == 'sim'
       - uses: docker/login-action@v3
-        if: steps.versao.outputs.mudou == 'sim'
+        if: steps.pacote.outputs.ok == 'sim'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Imagens com o pacote oficial
-        if: steps.versao.outputs.mudou == 'sim'
+        if: steps.pacote.outputs.ok == 'sim'
         run: |
           set -e
           for s in regime-regular simples-nacional; do
+            [ -f imagem/$s/app.jar ] || { echo "Sem aplicação oficial para $s; imagem mantida."; continue; }
             cp servicos/calculadora-rtc/Dockerfile.oficial imagem/$s/Dockerfile
             docker buildx build --platform linux/amd64 --push \
               --label org.opencontainers.image.source=https://github.com/${{ github.repository }} \
@@ -94,13 +108,13 @@ jobs:
           done
 
       - name: Tabela de códigos da NFS-e
-        if: steps.versao.outputs.mudou == 'sim'
+        if: steps.pacote.outputs.ok == 'sim'
         run: |
           python3 -I servicos/calculadora-rtc/gerar_servicos_nfse.py imagem/regime-regular/calculadora-pro.db 2027-01-01 \
             "pacote oficial ${{ steps.versao.outputs.app }}" packages/regras/dados/servicos-nfse.json
 
       - name: Abrir PR
-        if: steps.versao.outputs.mudou == 'sim'
+        if: steps.pacote.outputs.ok == 'sim'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

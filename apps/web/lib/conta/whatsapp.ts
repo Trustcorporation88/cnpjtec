@@ -36,6 +36,12 @@ export function depsDoCaderno(config: ConfiguracaoDaConta, site: string): DepsCa
       if (!r.ok) throw new Error("O cofre aceita até 3 mil notas por conta.");
       return { emitente: nota.emitenteNome ?? "fornecedor", numero: nota.numero, valor: nota.valorTotal };
     },
+    async ligarLembretes(telefone) {
+      return chamar<boolean>(config, "srv_wa_lembretes_ligar", { p_telefone: telefone });
+    },
+    async desligarLembretes(telefone) {
+      return chamar<boolean>(config, "srv_wa_lembretes_desligar", { p_telefone: telefone });
+    },
     agora: () => new Date(),
     site,
     consentimento:
