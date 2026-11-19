@@ -1,0 +1,46 @@
+name: imagens-rtc
+
+# Monta as imagens das calculadoras oficiais da Receita (servicos/calculadora-rtc) e publica no
+# GitHub Container Registry. O Railway sobe os serviços a partir dessas imagens públicas, que só
+# contêm código aberto da Receita (MIT) e o banco montado com os scripts oficiais.
+
+on:
+  push:
+    branches: [main]
+    paths: ["servicos/calculadora-rtc/**", ".github/workflows/imagens-rtc.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  imagem:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        servico: [regime-regular, simples-nacional, danfse]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: servicos/calculadora-rtc/Dockerfile.${{ matrix.servico }}
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/trustcorporation88/rtc-${{ matrix.servico }}:latest
+            ghcr.io/trustcorporation88/rtc-${{ matrix.servico }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.licenses=MIT
+          cache-from: type=gha,scope=${{ matrix.servico }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.servico }}
