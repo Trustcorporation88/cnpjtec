@@ -70,7 +70,7 @@ export default function PaginaDoCadesp() {
             </a>
           </p>
           <p className="observacao">
-            Ainda não tem MEI? Faça o <Link href="/">Raio-X</Link> para ver se o MEI é o melhor
+            Ainda não tem MEI? Faça o <Link href="/minha-situacao">Raio-X</Link> para ver se o MEI é o melhor
             caminho para você.
           </p>
         </li>

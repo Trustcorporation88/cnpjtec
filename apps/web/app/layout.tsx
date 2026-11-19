@@ -7,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Medicao } from "@/components/Medicao";
+import { MenuPrincipal } from "@/components/MenuPrincipal";
+import { GRUPOS_DO_MENU } from "@/lib/menu";
 
 export const metadata: Metadata = {
   title: "ProContador: imposto de quem trabalha por conta própria",
@@ -27,41 +29,50 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <p className="aviso-teste" role="note">
-          Versão de testes. As regras ainda estão sendo conferidas por um contador.
-        </p>
+        <a className="pular" href="#conteudo">Pular para o conteúdo</a>
         <header className="topo">
-          <Link className="marca" href="/" aria-label="ProContador, página inicial">
-            <Image src="/marca/escudo.png" alt="" width={37} height={48} priority />
-            <span>ProContador</span>
-          </Link>
-          <nav aria-label="Principal">
-            <Link href="/">Minha situação</Link>
-            <Link href="/simulador">Comparar</Link>
-            <Link href="/caderno">Caderno</Link>
-            <Link href="/limite">Meu limite</Link>
-            <Link href="/sair-do-mei">Sair do MEI</Link>
-            <Link href="/das">Guia do MEI</Link>
-            <Link href="/cnpj-tecnico">CNPJ técnico</Link>
-            <Link href="/cadesp">Inscrição estadual</Link>
-            <Link href="/nota-de-servico">Códigos da nota</Link>
-            <Link href="/cofre">Cofre de notas</Link>
-            <Link href="/abrir-mei">Abrir MEI</Link>
-            <Link href="/assistente">Perguntar</Link>
-            <Link href="/ajuda">Contador</Link>
-            <Link href="/conta">Minha conta</Link>
-          </nav>
+          <div className="topo-dentro">
+            <Link className="marca" href="/" aria-label="ProContador, página inicial">
+              <Image src="/marca/escudo.png" alt="" width={31} height={40} priority />
+              <span>ProContador</span>
+            </Link>
+            <MenuPrincipal />
+          </div>
         </header>
-        <main>{children}</main>
+        <p className="aviso-teste" role="note">
+          Versão de testes: as regras estão em revisão por um contador.
+        </p>
+        <main id="conteudo">{children}</main>
         <footer className="rodape">
-          <p>
-            O resultado é uma orientação geral, feita só com as respostas que você deu. Ele não
-            substitui a análise de um contador.
-          </p>
-          <p>
-            Não pedimos senha do gov.br. Sem conta, não guardamos as suas respostas. Com conta, você baixa ou apaga
-            tudo quando quiser.
-          </p>
+          <div className="rodape-dentro">
+            <div className="rodape-marca">
+              <p className="rodape-nome">ProContador</p>
+              <p>
+                Imposto de quem trabalha por conta própria, explicado com a lei na mão. Para motorista,
+                entregador, diarista, manicure, revendedora e MEI.
+              </p>
+            </div>
+            {GRUPOS_DO_MENU.map((grupo) => (
+              <nav key={grupo.titulo} aria-label={grupo.titulo}>
+                <p className="rodape-titulo">{grupo.titulo}</p>
+                <ul>
+                  {grupo.links.map((l) => (
+                    <li key={l.href}><Link href={l.href}>{l.texto}</Link></li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
+          <div className="rodape-letras">
+            <p>
+              O resultado é uma orientação geral, feita só com as respostas que você deu. Ele não substitui a
+              análise de um contador.
+            </p>
+            <p>
+              Não pedimos senha do gov.br. Sem conta, não guardamos as suas respostas. Com conta, você baixa ou
+              apaga tudo quando quiser.
+            </p>
+          </div>
         </footer>
         {GA4 && <Medicao id={GA4} />}
       </body>
