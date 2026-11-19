@@ -37,7 +37,7 @@ export function MenuPrincipal() {
       <details className="menu-completo" ref={menu}>
         <summary>
           <span className="menu-icone" aria-hidden="true" />
-          Menu
+          <span className="menu-rotulo">Menu</span>
         </summary>
         <div className="menu-painel">
           {GRUPOS_DO_MENU.map((grupo) => (

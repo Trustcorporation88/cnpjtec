@@ -39,9 +39,6 @@ export default function Layout({ children }: { children: ReactNode }) {
             <MenuPrincipal />
           </div>
         </header>
-        <p className="aviso-teste" role="note">
-          Versão de testes: as regras estão em revisão por um contador.
-        </p>
         <main id="conteudo">{children}</main>
         <footer className="rodape">
           <div className="rodape-dentro">

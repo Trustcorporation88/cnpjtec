@@ -205,7 +205,7 @@ export default function Inicio() {
             </div>
             <div>
               <dt>Revisado por contador</dt>
-              <dd>As regras estão em conferência por um contador com registro no CRC. Até terminar, o site avisa que é versão de testes.</dd>
+              <dd>As regras passam pela conferência de um contador com registro no CRC.</dd>
             </div>
             <div>
               <dt>Tabelas oficiais da Receita</dt>
