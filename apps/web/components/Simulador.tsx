@@ -205,7 +205,7 @@ function Comparacao({ r }: { r: ResultadoDoSimulador }) {
       )}
 
       <p>
-        <Link className="botao" href="/">Fazer o Raio-X completo</Link>
+        <Link className="botao" href="/minha-situacao">Ver a minha situação completa</Link>
       </p>
 
       <details className="fontes">

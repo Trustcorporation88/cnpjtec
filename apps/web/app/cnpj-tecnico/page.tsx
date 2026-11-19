@@ -43,7 +43,7 @@ export default function PaginaDoCnpjTecnico() {
             seu caso.
           </p>
           <p>
-            <Link className="botao" href="/">
+            <Link className="botao" href="/minha-situacao">
               Fazer o Raio-X
             </Link>
           </p>

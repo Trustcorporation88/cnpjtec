@@ -78,7 +78,7 @@ export function Assistente() {
     return (
       <div className="guia">
         <h1>Pergunte do seu jeito</h1>
-        <p className="resumo">A conversa livre ainda não está ligada. Enquanto isso, <Link href="/">faça o Raio-X</Link> ou <Link href="/ajuda">pergunte a um contador</Link>.</p>
+        <p className="resumo">A conversa livre ainda não está ligada. Enquanto isso, <Link href="/minha-situacao">veja a sua situação</Link> ou <Link href="/ajuda">pergunte a um contador</Link>.</p>
       </div>
     );
   }
