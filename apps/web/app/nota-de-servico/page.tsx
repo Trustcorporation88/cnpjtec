@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { baseDeRegras } from "@cnpjtec/regras";
 import { CodigosDaNota } from "@/components/CodigosDaNota";
 import { Fontes } from "@/components/Fontes";
+import { GerarDanfse } from "@/components/GerarDanfse";
+import { configuracaoDanfse } from "@/lib/danfse";
 import { citar } from "@/lib/regras-tela";
 
 export const metadata: Metadata = {
@@ -9,6 +11,8 @@ export const metadata: Metadata = {
   description:
     "Ache o código de tributação nacional, a NBS, o indicador de operação e a classificação do IBS e da CBS do seu serviço, na tabela oficial da Receita.",
 };
+
+export const dynamic = "force-dynamic";
 
 export default function PaginaDaNotaDeServico() {
   return (
@@ -22,6 +26,7 @@ export default function PaginaDaNotaDeServico() {
         códigos que a tabela oficial da Receita liga ao seu serviço, prontos para copiar no emissor.
       </p>
       <CodigosDaNota />
+      {configuracaoDanfse() && <GerarDanfse />}
       <section aria-labelledby="t-antes">
         <h2 id="t-antes">Antes de usar</h2>
         <ul className="lista">
