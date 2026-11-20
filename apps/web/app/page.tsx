@@ -33,28 +33,13 @@ function exemploDaPlaca() {
   return { titulo: r.diagnostico.titulo, itens };
 }
 
-const PUBLICOS = [
-  {
-    quem: "Motorista e entregador de aplicativo",
-    pergunta: "Uber, 99, iFood: o que a Reforma cobra de quem roda por aplicativo?",
-    href: "/minha-situacao",
-  },
-  {
-    quem: "Diarista, manicure e quem presta serviço",
-    pergunta: "Preciso de CNPJ, de nota fiscal ou de cadastro na prefeitura?",
-    href: "/minha-situacao",
-  },
-  {
-    quem: "Revendedora Natura, Avon e outras marcas",
-    pergunta: "Revenda precisa de inscrição estadual? E as notas de compra?",
-    href: "/cadesp",
-  },
-  {
-    quem: "MEI perto do limite",
-    pergunta: "Se eu passar do limite, quanto vou pagar como empresa?",
-    href: "/sair-do-mei",
-  },
-];
+const PERFIS_DA_ABERTURA = [
+  { perfil: "motorista", rotulo: "Motorista de aplicativo", exemplo: "Uber, 99, inDrive" },
+  { perfil: "entregador", rotulo: "Entregador", exemplo: "iFood, Rappi, Loggi" },
+  { perfil: "servico", rotulo: "Presto serviço", exemplo: "Manicure, diarista, pedreiro" },
+  { perfil: "revenda", rotulo: "Revendo produtos", exemplo: "Natura, Avon, Boticário" },
+  { perfil: "mei", rotulo: "Já tenho MEI", exemplo: "Guia, limite, declaração" },
+] as const;
 
 const DUVIDAS = [
   { pergunta: "Vou precisar de CNPJ técnico?", href: "/cnpj-tecnico" },
@@ -67,11 +52,11 @@ const DUVIDAS = [
 
 const FERRAMENTAS = [
   { nome: "Caderno de vendas", texto: "Anote o que entrou no mês, pelo site ou pelo WhatsApp, e veja o limite do ano.", href: "/caderno" },
-  { nome: "Guia do MEI", texto: "O passo a passo para gerar o DAS pelo canal oficial da Receita, sem pagar nada e sem senha.", href: "/das" },
-  { nome: "Declaração anual", texto: "Os valores da DASN-SIMEI tirados do seu caderno de vendas, prontos para copiar.", href: "/declaracao" },
-  { nome: "Códigos da nota de serviço", texto: "Código nacional, NBS e classificação da Reforma, direto da tabela oficial da Receita.", href: "/nota-de-servico" },
+  { nome: "Guia do MEI", texto: "Como tirar a guia do mês no site da Receita, de graça e sem senha.", href: "/das" },
+  { nome: "Declaração anual", texto: "Os números da declaração anual do MEI, tirados do seu caderno de vendas.", href: "/declaracao" },
+  { nome: "Códigos da nota de serviço", texto: "Os códigos certos para a sua nota de serviço, da tabela oficial da Receita.", href: "/nota-de-servico" },
   { nome: "Cofre de notas", texto: "Guarde as notas das compras da marca e prove de onde veio cada produto.", href: "/cofre" },
-  { nome: "Saída do MEI", texto: "Compare a guia do MEI com a de empresa no Simples Nacional, mês a mês.", href: "/sair-do-mei" },
+  { nome: "Se eu sair do MEI", texto: "Quanto você vai pagar por mês se passar do limite e deixar de ser MEI.", href: "/sair-do-mei" },
 ];
 
 export default function Inicio() {
@@ -82,29 +67,27 @@ export default function Inicio() {
       <section className="abertura-inicio" aria-labelledby="titulo-inicio">
         <div className="faixa">
           <div className="abertura-texto">
-            <h1 id="titulo-inicio">
-              O imposto de quem trabalha por conta própria, explicado com a lei na mão.
-            </h1>
-            <p className="abertura-sub">
-              Em {ANO_AVALIADO} chegam a CBS e o IBS. Responda poucas perguntas e veja o que vale para você:
-              nanoempreendedor, MEI, CNPJ técnico, nota fiscal e inscrição estadual.
-            </p>
-            <div className="abertura-acoes">
-              <Link className="botao-principal" href="/minha-situacao">
-                Descobrir minha situação
-              </Link>
-              <Link className="botao-secundario" href="/assistente">
-                Perguntar à assistente
-              </Link>
-            </div>
+            <h1 id="titulo-inicio">Em {ANO_AVALIADO} o imposto muda. Veja se muda para você.</h1>
+            <p className="abertura-sub">Toque no que você faz:</p>
+            <ul className="perfis">
+              {PERFIS_DA_ABERTURA.map((p) => (
+                <li key={p.perfil}>
+                  <Link href={`/minha-situacao?perfil=${p.perfil}`}>
+                    <strong>{p.rotulo}</strong>
+                    <span>{p.exemplo}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
             <p className="abertura-garantias">
-              De graça. Sem cadastro. Leva 3 minutos. Nunca pedimos senha do gov.br.
+              De graça e sem cadastro. Nunca pedimos senha do gov.br.{" "}
+              <Link href="/assistente">Tem uma dúvida? Pergunte aqui.</Link>
             </p>
           </div>
 
           <figure className="vitrine" aria-labelledby="vitrine-legenda">
             <figcaption id="vitrine-legenda" className="vitrine-legenda">
-              Resultado real, calculado agora pelo nosso motor de regras
+              Um resultado de verdade, feito agora pelo site
             </figcaption>
             <p className="vitrine-perfil">
               {EXEMPLO.profissao}, {EXEMPLO.media}, sem MEI, em São Paulo
@@ -124,30 +107,11 @@ export default function Inicio() {
         </div>
       </section>
 
-      <section className="secao" aria-labelledby="titulo-publicos">
-        <div className="faixa">
-          <h2 id="titulo-publicos">Feito para quem não tem tempo de entender de imposto</h2>
-          <ul className="publicos">
-            {PUBLICOS.map((p) => (
-              <li key={p.quem}>
-                <Link href={p.href}>
-                  <strong>{p.quem}</strong>
-                  <span>{p.pergunta}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       <section className="secao secao-clara" aria-labelledby="titulo-duvidas">
         <div className="faixa duas-colunas">
           <div>
             <h2 id="titulo-duvidas">As dúvidas de {ANO_AVALIADO}, respondidas uma a uma</h2>
-            <p>
-              A Reforma Tributária muda a vida de quem trabalha por conta própria, mas cada caso é um caso. Aqui você
-              vai direto na sua pergunta, e cada resposta mostra a lei de onde ela saiu.
-            </p>
+            <p>O imposto muda em 2027, mas cada caso é um caso. Toque na sua dúvida e veja a resposta, com a lei de onde ela saiu.</p>
           </div>
           <ul className="duvidas">
             {DUVIDAS.map((d) => (
@@ -164,16 +128,16 @@ export default function Inicio() {
           <h2 id="titulo-como">Como funciona</h2>
           <ol className="passos">
             <li>
-              <strong>Conte como você trabalha</strong>
-              <span>O que você faz, quanto entra por mês e se já tem MEI. Nada de documento ou senha.</span>
+              <strong>Toque no que você faz</strong>
+              <span>Escolha o seu trabalho e diga quanto entra por mês. Sem documento e sem senha.</span>
             </li>
             <li>
-              <strong>Veja o que vale para você</strong>
-              <span>O que fazer agora, o que você não precisa fazer e o que o governo ainda não definiu, com a regra citada em cada item.</span>
+              <strong>Veja o que muda para você</strong>
+              <span>O que fazer agora, o que você não precisa fazer e o que o governo ainda não decidiu. Cada item mostra a lei.</span>
             </li>
             <li>
               <strong>Fique em dia o ano todo</strong>
-              <span>Caderno de vendas, guia do MEI, declaração anual e lembretes pelo WhatsApp, quando você pedir.</span>
+              <span>Anote suas vendas, tire a guia do MEI, faça a declaração do ano e receba lembretes no WhatsApp.</span>
             </li>
           </ol>
         </div>
@@ -209,7 +173,7 @@ export default function Inicio() {
             </div>
             <div>
               <dt>Tabelas oficiais da Receita</dt>
-              <dd>Os códigos da nota e os cálculos da Reforma vêm das calculadoras oficiais publicadas pela Receita Federal.</dd>
+              <dd>Os códigos da nota e as contas do imposto novo vêm das calculadoras oficiais da Receita Federal.</dd>
             </div>
             <div>
               <dt>Seus dados são seus</dt>
@@ -223,7 +187,7 @@ export default function Inicio() {
         <div className="faixa">
           <h2 id="titulo-chamada">Saiba hoje o que muda para você em {ANO_AVALIADO}.</h2>
           <Link className="botao-principal" href="/minha-situacao">
-            Descobrir minha situação
+            Ver o que muda para mim
           </Link>
         </div>
       </section>
