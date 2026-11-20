@@ -22,6 +22,7 @@ import {
   configuracaoEvolution,
   enviarPdf,
   enviarTexto,
+  deOutraInstancia,
   lerEvento,
   segredoConfere,
   type ConfiguracaoEvolution,
@@ -106,6 +107,7 @@ export async function POST(request: Request): Promise<Response> {
 
   const mensagem = lerEvento(corpo);
   if (!mensagem) return Response.json({ ok: true, tratou: false, ignorado: "evento" });
+  if (deOutraInstancia(config, mensagem)) return Response.json({ ok: true, tratou: false, ignorado: "instancia" });
   if (!(await memoriaDoServidor().reservar(`wa:vista:${resumo(mensagem.id)}`, 10 * 60))) {
     return Response.json({ ok: true, tratou: false, ignorado: "repetida" });
   }

@@ -559,6 +559,29 @@ main:has(> .inicio) {
   text-underline-offset: 0.2em;
 }
 
+.botao-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  margin-top: 0.9rem;
+  padding: 0.75rem 1.4rem;
+  background: #1f8f4e;
+  border-radius: 8px;
+  color: var(--papel);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.botao-whatsapp:hover {
+  background: #187a41;
+}
+
+.chamada-final .botao-whatsapp {
+  margin-top: 0;
+}
+
 .abertura-garantias {
   margin-top: 1.25rem;
   color: #a9bdb7;
