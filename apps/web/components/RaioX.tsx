@@ -6,6 +6,7 @@ import type { RespostaDoRaioX } from "@/lib/respostas";
 import type { DadosDoRadar } from "./Radar";
 import { Resultado } from "./Resultado";
 import { medir } from "@/lib/medir";
+import { PERFIS, type Perfil } from "@/lib/perfis";
 
 type TipoAtividade =
   | "transporte_passageiros"
@@ -90,9 +91,16 @@ const SIM_NAO: { valor: SimNao; rotulo: string }[] = [
   { valor: "nao_sei", rotulo: "Não sei" },
 ];
 
-export function RaioX({ ano, radar }: { ano: number; radar: DadosDoRadar | null }) {
-  const [estado, setEstado] = useState<Estado>({ tipos: [], valores: {}, uf: "SP" });
-  const [indice, setIndice] = useState(0);
+function estadoInicial(perfil?: Perfil): Estado {
+  const base: Estado = { tipos: [], valores: {}, uf: "SP" };
+  if (!perfil) return base;
+  const p = PERFIS[perfil].estado;
+  return { ...base, ...p, tipos: [...p.tipos] };
+}
+
+export function RaioX({ ano, radar, perfil }: { ano: number; radar: DadosDoRadar | null; perfil?: Perfil | undefined }) {
+  const [estado, setEstado] = useState<Estado>(() => estadoInicial(perfil));
+  const [indice, setIndice] = useState(perfil ? PERFIS[perfil].passo : 0);
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [resposta, setResposta] = useState<RespostaDoRaioX | null>(null);
@@ -191,8 +199,8 @@ export function RaioX({ ano, radar }: { ano: number; radar: DadosDoRadar | null 
     <form className="pergunta" onSubmit={aoContinuar} noValidate>
       {indice === 0 && (
         <p className="abertura">
-          Em {ano} mudam as regras de imposto para quem trabalha por conta própria. Responda poucas
-          perguntas e veja o que vale para você. É de graça e não precisa de cadastro.
+          Em {ano} o imposto muda para quem trabalha por conta própria. Toque nas opções e veja o que
+          muda para você. É de graça e não precisa de cadastro.
         </p>
       )}
       <p className="progresso">
