@@ -71,6 +71,8 @@ export interface MensagemRecebida {
   /** Número com DDI, quando conhecido. */
   numero: string | null;
   texto: string;
+  /** Nome da instância da Evolution que recebeu a mensagem, quando o evento informa. */
+  instancia?: string;
 }
 
 function numeroDoJid(jid: string | undefined): string | null {
@@ -94,6 +96,7 @@ export function lerEvento(corpo: unknown): MensagemRecebida | null {
 
   const numero = numeroDoJid(key.remoteJid) ?? numeroDoJid(key.remoteJidAlt) ?? numeroDoJid(key.senderPn);
   const destino = numero ?? key.remoteJid;
+  const instancia = evento.data.instance ? { instancia: evento.data.instance } : {};
 
   const bruto = (message ?? {}) as Record<string, unknown>;
   const doc = (bruto.documentMessage ??
@@ -107,12 +110,52 @@ export function lerEvento(corpo: unknown): MensagemRecebida | null {
       numero,
       texto: typeof doc.caption === "string" ? doc.caption.slice(0, 500) : "",
       documento: { nome: String(doc.fileName ?? "arquivo").slice(0, 120), tipo: String(doc.mimetype ?? "") },
+      ...instancia,
     };
   }
 
   const texto = (message?.conversation ?? message?.extendedTextMessage?.text ?? "").trim();
   if (!texto || texto.length > 500) return null;
-  return { id: key.id, destino, numero, texto };
+  return { id: key.id, destino, numero, texto, ...instancia };
+}
+
+/** A mensagem veio de outra conexão (ex.: a linha da Trustcorp repassada pelo n8n)? */
+export function deOutraInstancia(config: ConfiguracaoEvolution, mensagem: MensagemRecebida): boolean {
+  return mensagem.instancia !== undefined && mensagem.instancia.toLowerCase() !== config.instancia.toLowerCase();
+}
+
+/**
+ * Número público do ProContador no WhatsApp (só dígitos, com DDI). Enquanto não estiver
+ * configurado, o site não mostra o botão e o webhook não é mexido.
+ */
+export function numeroPublicoDoWhatsapp(env: Record<string, string | undefined> = process.env): string | null {
+  const n = (env.WHATSAPP_NUMERO_PUBLICO ?? "").replace(/\D/g, "");
+  return /^\d{12,13}$/.test(n) ? n : null;
+}
+
+export function linkDoWhatsapp(numero: string, texto = "Oi, ProContador!"): string {
+  return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+}
+
+/**
+ * Aponta o webhook da instância para o ProContador. Chamado ao subir o site, e só quando o número
+ * público está configurado: assim a linha da Trustcorp, que tem webhook próprio no n8n, nunca é tocada.
+ */
+export async function configurarWebhook(
+  config: ConfiguracaoEvolution,
+  siteUrl: string,
+  buscar: typeof fetch = fetch,
+): Promise<boolean> {
+  const destino = `${siteUrl.replace(/\/$/, "")}/api/whatsapp/webhook?segredo=${encodeURIComponent(config.segredo)}`;
+  const r = await buscar(`${config.url}/webhook/set/${encodeURIComponent(config.instancia)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: config.chave },
+    body: JSON.stringify({
+      webhook: { enabled: true, url: destino, byEvents: false, base64: false, events: ["MESSAGES_UPSERT"] },
+    }),
+    signal: AbortSignal.timeout(15_000),
+  });
+  return r.ok;
 }
 
 /** Envia uma mensagem de texto pela instância configurada. */

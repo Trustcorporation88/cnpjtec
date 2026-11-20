@@ -9,7 +9,7 @@ const evento = (key: Record<string, unknown>, message: Record<string, unknown> =
 
 describe("lerEvento", () => {
   it("lê texto simples", () => {
-    expect(lerEvento(evento({}))).toEqual({ id: "ABC", destino: "5514998370223", numero: "5514998370223", texto: "oi" });
+    expect(lerEvento(evento({}))).toEqual({ id: "ABC", destino: "5514998370223", numero: "5514998370223", texto: "oi", instancia: "Trustcorp" });
   });
   it("lê texto estendido e evento em maiúsculas", () => {
     const e = { ...evento({}, { extendedTextMessage: { text: "1" } }), event: "MESSAGES_UPSERT" };
@@ -65,5 +65,37 @@ describe("configuração e envio", () => {
     expect(segredoConfere("abc", "abc")).toBe(true);
     expect(segredoConfere("abc", "abd")).toBe(false);
     expect(segredoConfere("abc", null)).toBe(false);
+  });
+});
+
+describe("número público e instância", () => {
+  it("só aceita número com DDI", async () => {
+    const { numeroPublicoDoWhatsapp, linkDoWhatsapp } = await import("./evolution");
+    expect(numeroPublicoDoWhatsapp({})).toBeNull();
+    expect(numeroPublicoDoWhatsapp({ WHATSAPP_NUMERO_PUBLICO: "(14) 99999-0000" })).toBeNull();
+    expect(numeroPublicoDoWhatsapp({ WHATSAPP_NUMERO_PUBLICO: "+55 14 99999-0000" })).toBe("5514999990000");
+    expect(linkDoWhatsapp("5514999990000")).toBe("https://wa.me/5514999990000?text=Oi%2C%20ProContador!");
+  });
+
+  it("ignora mensagem de outra conexão", async () => {
+    const { deOutraInstancia } = await import("./evolution");
+    const config = { instancia: "procontador" } as Parameters<typeof deOutraInstancia>[0];
+    const base = { id: "1", destino: "x", numero: null, texto: "oi" };
+    expect(deOutraInstancia(config, { ...base, instancia: "Trustcorp" })).toBe(true);
+    expect(deOutraInstancia(config, { ...base, instancia: "ProContador" })).toBe(false);
+    expect(deOutraInstancia(config, base)).toBe(false);
+  });
+
+  it("configura o webhook da instância com o segredo na URL", async () => {
+    const { configurarWebhook } = await import("./evolution");
+    let chamada: { url: string; corpo: unknown; chave: string } | null = null;
+    const buscar = (async (url: string, init: RequestInit) => {
+      chamada = { url, corpo: JSON.parse(String(init.body)), chave: (init.headers as Record<string, string>).apikey ?? "" };
+      return new Response("{}", { status: 201 });
+    }) as unknown as typeof fetch;
+    const config = { url: "https://evo", instancia: "procontador", chave: "k", segredo: "s".repeat(20) } as Parameters<typeof configurarWebhook>[0];
+    expect(await configurarWebhook(config, "https://app.procontador.com.br/", buscar)).toBe(true);
+    expect(chamada!.url).toBe("https://evo/webhook/set/procontador");
+    expect(JSON.stringify(chamada!.corpo)).toContain("https://app.procontador.com.br/api/whatsapp/webhook?segredo=");
   });
 });

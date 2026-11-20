@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ANO_AVALIADO, diagnosticar, Respostas } from "@/lib/respostas";
+import { linkDoWhatsapp, numeroPublicoDoWhatsapp } from "@/lib/whatsapp/evolution";
+
+// Lido a cada visita: o botão do WhatsApp só aparece quando o número público estiver configurado.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "ProContador: o imposto de quem trabalha por conta própria, com a lei na mão",
@@ -61,6 +65,8 @@ const FERRAMENTAS = [
 
 export default function Inicio() {
   const placa = exemploDaPlaca();
+  const whatsapp = numeroPublicoDoWhatsapp();
+  const linkWhatsapp = whatsapp ? linkDoWhatsapp(whatsapp) : null;
 
   return (
     <div className="inicio">
@@ -79,6 +85,12 @@ export default function Inicio() {
                 </li>
               ))}
             </ul>
+            {linkWhatsapp && (
+              <a className="botao-whatsapp" href={linkWhatsapp} target="_blank" rel="noopener">
+                <IconeWhatsapp />
+                Prefiro pelo WhatsApp
+              </a>
+            )}
             <p className="abertura-garantias">
               De graça e sem cadastro. Nunca pedimos senha do gov.br.{" "}
               <Link href="/assistente">Tem uma dúvida? Pergunte aqui.</Link>
@@ -186,11 +198,30 @@ export default function Inicio() {
       <section className="chamada-final" aria-labelledby="titulo-chamada">
         <div className="faixa">
           <h2 id="titulo-chamada">Saiba hoje o que muda para você em {ANO_AVALIADO}.</h2>
-          <Link className="botao-principal" href="/minha-situacao">
-            Ver o que muda para mim
-          </Link>
+          <div className="abertura-acoes">
+            <Link className="botao-principal" href="/minha-situacao">
+              Ver o que muda para mim
+            </Link>
+            {linkWhatsapp && (
+              <a className="botao-whatsapp" href={linkWhatsapp} target="_blank" rel="noopener">
+                <IconeWhatsapp />
+                Chamar no WhatsApp
+              </a>
+            )}
+          </div>
         </div>
       </section>
     </div>
+  );
+}
+
+function IconeWhatsapp() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22">
+      <path
+        fill="currentColor"
+        d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"
+      />
+    </svg>
   );
 }
