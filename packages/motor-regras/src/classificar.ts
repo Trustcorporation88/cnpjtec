@@ -155,6 +155,10 @@ export function classificar(perfil: Perfil, parametros: ParametrosDoMotor): Resu
       if (prestaServico) regras.add("R19");
       if (revende) regras.add("R20");
       alertas.push({ codigo: "REGISTRAR_VENDAS_PF", regra: "R18" });
+      regras.add("R43");
+      alertas.push({ codigo: "NOTA_MENSAL_PF", regra: "R43" });
+      regras.add("R44");
+      alertas.push({ codigo: "VENDA_PARA_EMPRESA_SEM_CREDITO", regra: "R44" });
     }
     return montar();
   }

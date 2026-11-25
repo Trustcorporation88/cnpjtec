@@ -110,6 +110,15 @@ describe("casos de referência da Fase 0 (2027)", () => {
     expect(r.regrasAplicadas).toContain("R18");
   });
 
+  it("T8c: em 2027 o MEI vê a nota mensal para pessoa física e a venda a empresa sem crédito (Res. CGSN 196)", () => {
+    const r = classificar(
+      pf({ temMei: true, atividades: [{ tipo: "servico", receitaBrutaAnual: "40000" }] }),
+      parametros,
+    );
+    expect(codigos(r)).toEqual(expect.arrayContaining(["NOTA_MENSAL_PF", "VENDA_PARA_EMPRESA_SEM_CREDITO"]));
+    expect(r.regrasAplicadas).toEqual(expect.arrayContaining(["R43", "R44"]));
+  });
+
   it("T8b: em 2026 a regra da DASN-SIMEI como documento ainda não vale", () => {
     const r = classificar(
       pf({
@@ -121,6 +130,7 @@ describe("casos de referência da Fase 0 (2027)", () => {
       parametros,
     );
     expect(codigos(r)).not.toContain("REGISTRAR_VENDAS_PF");
+    expect(codigos(r)).not.toContain("NOTA_MENSAL_PF");
     expect(r.limiteMei).toBe("81000.00");
   });
 });

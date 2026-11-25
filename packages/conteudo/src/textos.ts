@@ -134,6 +134,16 @@ export const textoDoAlerta: Record<CodigoAlerta, { secao: "fazerAgora"; texto: s
     texto:
       "A partir de 2027, anote cada venda ou serviço feito para pessoa física. Para esse cliente a declaração anual do MEI pode valer como documento fiscal, então a anotação precisa estar em dia. Para empresa, a nota fiscal continua.",
   },
+  NOTA_MENSAL_PF: {
+    secao: "fazerAgora",
+    texto:
+      "Se você prefere dar nota para quem é pessoa física, a partir de 2027 pode fazer uma nota só por mês, com o total das vendas do mês, sem o nome de cada cliente. Ela precisa sair até o último dia do mês.",
+  },
+  VENDA_PARA_EMPRESA_SEM_CREDITO: {
+    secao: "fazerAgora",
+    texto:
+      "Quando vender para empresa, continue dando nota. Avise o cliente: a partir de 2027, a compra feita de MEI não dá a ele desconto nos impostos novos (o chamado crédito de IBS e CBS).",
+  },
   GUARDAR_NOTAS_DE_COMPRA: {
     secao: "fazerAgora",
     texto:
