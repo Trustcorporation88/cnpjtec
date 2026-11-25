@@ -95,7 +95,7 @@ export const FERRAMENTAS = [
   },
   {
     name: "buscar_regra",
-    description: "Devolve texto, fonte, vigência e status de uma regra pelo identificador (R01 a R42).",
+    description: "Devolve texto, fonte, vigência e status de uma regra pelo identificador (R01 em diante; veja o índice no prompt).",
     input_schema: {
       type: "object",
       properties: { id: { type: "string", pattern: "^R\\d{2}$" } },

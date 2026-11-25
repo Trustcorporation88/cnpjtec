@@ -1,6 +1,6 @@
 {
-  "versao": "0.7.0",
-  "atualizadoEm": "2026-11-19",
+  "versao": "0.8.0",
+  "atualizadoEm": "2026-11-25",
   "parametros": {
     "limiteMeiAnual": {
       "2026": {
@@ -732,6 +732,45 @@
       "fonte": "LC 123/2006, art. 18, § 1º-A; Manual do PGDAS-D da Receita Federal",
       "status": "EM_VIGOR",
       "conferencia": "OFICIAL"
+    },
+    {
+      "id": "R43",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "Nas vendas e prestações de serviço a consumidor final pessoa física não inscrita no CNPJ, o MEI pode emitir um único documento fiscal por mês, de forma consolidada, até o último dia do mês da operação, sem identificar cada comprador. É uma opção para quem emite nota e não cria obrigação nova. O leiaute técnico e a adesão dos estados ainda não foram definidos.",
+      "vigenciaInicio": "2027-01-01",
+      "vigenciaFim": null,
+      "fonte": "Resolução CGSN 196/2026 (DOU de 24/11/2026), que inclui o parágrafo único no art. 106-C da Resolução CGSN 140/2018",
+      "status": "EFEITO_FUTURO",
+      "conferencia": "SECUNDARIA"
+    },
+    {
+      "id": "R44",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "As vendas e prestações de serviço do MEI optante pelo SIMEI não dão crédito de IBS e CBS a quem compra. A nota fiscal para cliente com CNPJ continua obrigatória (R34).",
+      "vigenciaInicio": "2027-01-01",
+      "vigenciaFim": null,
+      "fonte": "Resolução CGSN 196/2026 (DOU de 24/11/2026), que altera o art. 58 da Resolução CGSN 140/2018",
+      "status": "EFEITO_FUTURO",
+      "conferencia": "SECUNDARIA"
+    },
+    {
+      "id": "R45",
+      "trilhas": [
+        "C",
+        "D"
+      ],
+      "regra": "Os valores fixos mensais de IBS e CBS devidos pelo MEI optante pelo SIMEI não mudam com as novas tabelas do Simples Nacional.",
+      "vigenciaInicio": "2027-01-01",
+      "vigenciaFim": null,
+      "fonte": "Resolução CGSN 196/2026 (DOU de 24/11/2026), que altera o art. 25-A da Resolução CGSN 140/2018",
+      "status": "EFEITO_FUTURO",
+      "conferencia": "SECUNDARIA"
     }
   ]
 }
